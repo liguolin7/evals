@@ -3,8 +3,10 @@ from evals.api import CompletionFn
 from evals.eval import Eval
 from evals.record import RecorderBase
 from .metrics import FaithfulnessMetrics
+from .report import FaithfulnessReport
 import random
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -91,6 +93,7 @@ class FaithfulnessEval(Eval):
         eval_registry_path: str,
         samples_jsonl: str,
         seed: int = 20220722,
+        report_dir: str = "reports",
         **kwargs,
     ):
         super().__init__(
@@ -102,7 +105,8 @@ class FaithfulnessEval(Eval):
         )
         self.metrics_calculator = FaithfulnessMetrics()
         self.type_metrics = {}  # 用于存储每种类型的评估结果
-
+        self.report_generator = FaithfulnessReport(output_dir=report_dir)
+        
     def get_type_weights(self, sample_type: str) -> Dict[str, float]:
         """获取特定类型的评估权重"""
         return self.TYPE_WEIGHTS.get(sample_type, self.TYPE_WEIGHTS["general"])
@@ -179,7 +183,7 @@ class FaithfulnessEval(Eval):
         return f"Type: {sample_type}\nInstruction: {instruction}\nContext: {context}\nQuestion: {query}"
 
     def run(self, recorder: RecorderBase, return_samples: bool = False) -> Union[Dict[str, float], Dict[str, Any]]:
-        """运行评估"""
+        """运行评估并生成报告"""
         # 加载样本
         samples = self.get_samples()
         
@@ -213,16 +217,26 @@ class FaithfulnessEval(Eval):
         
         # 计算总体指标和类型特定指标
         final_metrics = self._calculate_final_metrics(sample_results)
+        type_averages = self._calculate_type_averages()
         
         # 使用特殊的sample_id记录最终结果
         with recorder.as_default_recorder("final_results"):
             recorder.record_metrics(**final_metrics)
         
+        # 生成评估报告
+        report_path = self.report_generator.generate_report(
+            final_metrics=final_metrics,
+            type_metrics=type_averages,
+            sample_results=sample_results
+        )
+        logger.info(f"评估报告已生成: {report_path}")
+        
         if return_samples:
             return {
                 "sample_results": sample_results,
                 "final_metrics": final_metrics,
-                "type_metrics": self._calculate_type_averages()
+                "type_metrics": type_averages,
+                "report_path": report_path
             }
         else:
             return final_metrics
