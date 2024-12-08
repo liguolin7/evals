@@ -1,5 +1,6 @@
 from typing import Optional, Dict, Any, List, Union
 from evals.api import CompletionFn
+from evals.completion_fns.openai import OpenAIChatCompletionFn
 from evals.eval import Eval
 from evals.record import RecorderBase
 from .metrics import FaithfulnessMetrics
@@ -158,28 +159,24 @@ class FaithfulnessEval(Eval):
             logger.error(f"Error occurred while evaluating the sample: {str(e)}")
             return None
 
-    def _build_prompt(self, sample_type: str, context: str, query: str) -> str:
-        """根据样本类型构建特定的提示词"""
-        type_specific_instructions = {
-            "economic_analysis": "Analyze the economic data and implications. Consider both direct and indirect effects.",
-            "current_events": "Provide a factual summary focusing on key events and their immediate implications.",
-            "medical_advice": "Provide evidence-based medical information. Be clear about the research context.",
-            "scientific_explanation": "Explain the scientific concept clearly and accurately. Use appropriate terminology.",
-            "technical_analysis": "Analyze the technical aspects and their practical implications.",
-            "historical_analysis": "Analyze historical events considering causes, effects, and broader context.",
-            "environmental_impact": "Assess environmental impacts considering both immediate and long-term effects.",
-            "policy_analysis": "Evaluate policy implications considering benefits, drawbacks, and implementation challenges."
-        }
-        
-        instruction = type_specific_instructions.get(sample_type, "")
-        return f"Type: {sample_type}\nInstruction: {instruction}\nContext: {context}\nQuestion: {query}"
+    def _build_prompt(self, sample_type: str, context: str, query: str) -> Union[str, list[dict[str, str]]]:
+        """构建提示词"""
+        if isinstance(self.completion_fn, OpenAIChatCompletionFn):
+            # 对于聊天模型使用消息格式
+            return [
+                {"role": "system", "content": "You are a helpful AI assistant that provides accurate and faithful responses."},
+                {"role": "user", "content": f"Context: {context}\n\nQuestion: {query}"}
+            ]
+        else:
+            # 对于普通补全模型使用文本格式
+            return f"Context: {context}\n\nQuestion: {query}\n\nAnswer:"
 
     def run(self, recorder: RecorderBase, return_samples: bool = False) -> Union[Dict[str, float], Dict[str, Any]]:
         """运行评估并生成报告"""
         # 加载样本
         samples = self.get_samples()
         
-        # 评��所有样本
+        # 评估所有样本
         sample_results = []
         self.type_metrics = {}  # 重置类型指标
         

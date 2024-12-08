@@ -2,6 +2,7 @@
 import os
 import sys
 import logging
+import argparse
 from evals.registry import Registry
 import datetime
 from evals.eval import Eval
@@ -109,4 +110,9 @@ def run_evaluation(
         raise e
 
 if __name__ == "__main__":
-    run_evaluation() 
+    parser = argparse.ArgumentParser(description='Run faithfulness evaluation')
+    parser.add_argument('--model', type=str, default="gpt-3.5-turbo",
+                      help='Model to evaluate (e.g., gpt-4, gpt-4-1106-preview)')
+    args = parser.parse_args()
+    
+    run_evaluation(model_name=args.model) 
