@@ -35,7 +35,7 @@ class FaithfulnessReport:
         Returns:
             str: Report file path
         """
-        # 生成报告���间戳
+        # 生成报告时间戳
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         report_dir = os.path.join(self.output_dir, f"report_{timestamp}")
         os.makedirs(report_dir, exist_ok=True)
@@ -67,17 +67,19 @@ class FaithfulnessReport:
         content.append("# Faithfulness Evaluation Report")
         content.append(f"\nGeneration Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         
-        # 2. ���体评估结果
+        # 2. 总体评估结果
         content.append("## 1. Overall Evaluation Results")
         content.append("\n### 1.1 Main Metrics")
         content.append("| Metric | Score |")
         content.append("|--------|--------|")
-        for metric, score in final_metrics.items():
-            content.append(f"| {metric} | {score:.4f} |")
+        for metric in ["factual_accuracy", "logical_coherence", "context_relevance", 
+                      "interpretative_reasoning", "information_completeness", "hallucination_score"]:
+            if metric in final_metrics:
+                content.append(f"| {metric} | {final_metrics[metric]:.4f} |")
         
         # 添加可视化图表引用
         content.append("\n### 1.2 Visualization Analysis")
-        content.append("\n#### 1.2.1 Overall Metrics Radar Chart")
+        content.append("\n#### 1.2.1 Overall Metrics Radar")
         content.append("![Overall Metrics Radar](overall_metrics_radar.png)")
         
         content.append("\n#### 1.2.2 Metrics Heatmap")
@@ -98,8 +100,10 @@ class FaithfulnessReport:
             content.append(f"\n### 2.{len(content)} {sample_type}")
             content.append("| Metric | Score |")
             content.append("|--------|--------|")
-            for metric, score in metrics.items():
-                content.append(f"| {metric} | {score:.4f} |")
+            for metric in ["factual_accuracy", "logical_coherence", "context_relevance", 
+                         "interpretative_reasoning", "information_completeness", "hallucination_score"]:
+                if metric in metrics:
+                    content.append(f"| {metric} | {metrics[metric]:.4f} |")
             content.append(f"\n![{sample_type} Radar]({sample_type}_radar.png)")
                 
         # 4. 样本分析
@@ -131,8 +135,10 @@ class FaithfulnessReport:
             content.append("\nEvaluation Metrics:")
             content.append("| Metric | Score |")
             content.append("|--------|--------|")
-            for metric, score in result["metrics"].items():
-                content.append(f"| {metric} | {score:.4f} |")
+            for metric in ["factual_accuracy", "logical_coherence", "context_relevance", 
+                         "interpretative_reasoning", "information_completeness", "hallucination_score"]:
+                if metric in result["metrics"]:
+                    content.append(f"| {metric} | {result['metrics'][metric]:.4f} |")
                 
         return "\n".join(content)
     

@@ -16,9 +16,19 @@ class FaithfulnessEval(Eval):
     This class implements the faithfulness evaluation framework for LLM responses.
     """
     
+    # 定义评估指标
+    METRICS = [
+        "factual_accuracy",
+        "logical_coherence",
+        "context_relevance",
+        "interpretative_reasoning",
+        "information_completeness",
+        "hallucination_score"
+    ]
+    
     # 定义不同类型的评估权重
     TYPE_WEIGHTS = {
-        "general": {  # 添加通用类型的权重配置
+        "general": {
             "factual_accuracy": 0.3,
             "logical_coherence": 0.2,
             "context_relevance": 0.15,
@@ -26,23 +36,7 @@ class FaithfulnessEval(Eval):
             "information_completeness": 0.1,
             "hallucination_score": 0.1
         },
-        "economic_analysis": {
-            "factual_accuracy": 0.3,
-            "logical_coherence": 0.2,
-            "context_relevance": 0.1,
-            "interpretative_reasoning": 0.2,
-            "information_completeness": 0.1,
-            "hallucination_score": 0.1
-        },
-        "current_events": {
-            "factual_accuracy": 0.35,
-            "logical_coherence": 0.15,
-            "context_relevance": 0.2,
-            "interpretative_reasoning": 0.1,
-            "information_completeness": 0.1,
-            "hallucination_score": 0.1
-        },
-        "medical_advice": {
+        "medical": {
             "factual_accuracy": 0.35,
             "logical_coherence": 0.15,
             "context_relevance": 0.15,
@@ -50,45 +44,29 @@ class FaithfulnessEval(Eval):
             "information_completeness": 0.1,
             "hallucination_score": 0.1
         },
-        "scientific_explanation": {
+        "historical": {
             "factual_accuracy": 0.3,
+            "logical_coherence": 0.2,
+            "context_relevance": 0.15,
+            "interpretative_reasoning": 0.15,
+            "information_completeness": 0.1,
+            "hallucination_score": 0.1
+        },
+        "scientific": {
+            "factual_accuracy": 0.35,
             "logical_coherence": 0.2,
             "context_relevance": 0.1,
-            "interpretative_reasoning": 0.2,
+            "interpretative_reasoning": 0.15,
             "information_completeness": 0.1,
             "hallucination_score": 0.1
         },
-        "technical_analysis": {
+        "legal": {
             "factual_accuracy": 0.3,
-            "logical_coherence": 0.2,
-            "context_relevance": 0.1,
-            "interpretative_reasoning": 0.2,
-            "information_completeness": 0.1,
-            "hallucination_score": 0.1
-        },
-        "historical_analysis": {
-            "factual_accuracy": 0.3,
-            "logical_coherence": 0.15,
+            "logical_coherence": 0.25,
             "context_relevance": 0.15,
-            "interpretative_reasoning": 0.2,
+            "interpretative_reasoning": 0.15,
             "information_completeness": 0.1,
-            "hallucination_score": 0.1
-        },
-        "environmental_impact": {
-            "factual_accuracy": 0.3,
-            "logical_coherence": 0.15,
-            "context_relevance": 0.15,
-            "interpretative_reasoning": 0.2,
-            "information_completeness": 0.1,
-            "hallucination_score": 0.1
-        },
-        "policy_analysis": {
-            "factual_accuracy": 0.25,
-            "logical_coherence": 0.2,
-            "context_relevance": 0.15,
-            "interpretative_reasoning": 0.2,
-            "information_completeness": 0.1,
-            "hallucination_score": 0.1
+            "hallucination_score": 0.05
         }
     }
 
@@ -177,7 +155,7 @@ class FaithfulnessEval(Eval):
             }
             
         except Exception as e:
-            logger.error(f"评估样本时发生错误: {str(e)}")
+            logger.error(f"Error occurred while evaluating the sample: {str(e)}")
             return None
 
     def _build_prompt(self, sample_type: str, context: str, query: str) -> str:
@@ -201,7 +179,7 @@ class FaithfulnessEval(Eval):
         # 加载样本
         samples = self.get_samples()
         
-        # 评估所有样本
+        # 评��所有样本
         sample_results = []
         self.type_metrics = {}  # 重置类型指标
         
