@@ -1,0 +1,74 @@
+{
+  "economic_analysis": {
+    "factual_accuracy": 0.7973757982254028,
+    "logical_coherence": 0.36947470158338547,
+    "context_relevance": 0.7016290128231049,
+    "interpretative_reasoning": 0.6423471093177795,
+    "information_completeness": 0.7084615384615385,
+    "hallucination_score": 0.2549575973302126,
+    "overall_faithfulness": 0.6080819165093394
+  },
+  "current_events": {
+    "factual_accuracy": 0.8426043093204498,
+    "logical_coherence": 0.478571355342865,
+    "context_relevance": 0.8518619239330292,
+    "interpretative_reasoning": 0.5957616597414017,
+    "information_completeness": 0.7170833333333333,
+    "hallucination_score": 0.48723743855953217,
+    "overall_faithfulness": 0.7170778395136197
+  },
+  "medical_advice": {
+    "factual_accuracy": 0.8170957863330841,
+    "logical_coherence": 0.3670520633459091,
+    "context_relevance": 0.7557039856910706,
+    "interpretative_reasoning": 0.7060784578323364,
+    "information_completeness": 0.8172413793103448,
+    "hallucination_score": 0.272764109633863,
+    "overall_faithfulness": 0.6693092501413975
+  },
+  "scientific_explanation": {
+    "factual_accuracy": 0.8103345632553101,
+    "logical_coherence": 0.5593716502189636,
+    "context_relevance": 0.7778609693050385,
+    "interpretative_reasoning": 0.7533369302749634,
+    "information_completeness": 0.8192307692307692,
+    "hallucination_score": 0.5261733382940292,
+    "overall_faithfulness": 0.7179685927583623
+  },
+  "technical_analysis": {
+    "factual_accuracy": 0.8075771033763885,
+    "logical_coherence": 0.19771748781204224,
+    "context_relevance": 0.758629322052002,
+    "interpretative_reasoning": 0.6173673272132874,
+    "information_completeness": 0.7094172297297296,
+    "hallucination_score": 0.15484651736915112,
+    "overall_faithfulness": 0.5675794009330708
+  },
+  "historical_analysis": {
+    "factual_accuracy": 0.7981290221214294,
+    "logical_coherence": 0.2596886307001114,
+    "context_relevance": 0.7871686816215515,
+    "interpretative_reasoning": 0.6697723329067231,
+    "information_completeness": 0.7637770897832816,
+    "hallucination_score": 0.12557419687509538,
+    "overall_faithfulness": 0.6193568987318606
+  },
+  "environmental_impact": {
+    "factual_accuracy": 0.839178740978241,
+    "logical_coherence": 0.43022534251213074,
+    "context_relevance": 0.6369227766990662,
+    "interpretative_reasoning": 0.5932463973760604,
+    "information_completeness": 0.6844219219219219,
+    "hallucination_score": 0.25530777759850026,
+    "overall_faithfulness": 0.624448089602406
+  },
+  "policy_analysis": {
+    "factual_accuracy": 0.7548263370990753,
+    "logical_coherence": 0.17219721525907516,
+    "context_relevance": 0.8020772933959961,
+    "interpretative_reasoning": 0.6262294173240661,
+    "information_completeness": 0.7487179487179487,
+    "hallucination_score": 0.16262829974293708,
+    "overall_faithfulness": 0.5598381296468851
+  }
+}

@@ -39,11 +39,20 @@ def create_recorder(run_spec: RunSpec) -> RecorderBase:
     """创建记录器"""
     return RecorderBase(run_spec=run_spec)
 
-def run_evaluation(model_name: str = "gpt-3.5-turbo"):
-    """运行评估
+def run_evaluation(
+    model_name: str = "gpt-3.5-turbo",
+    samples_path: str = "samples/faithfulness_samples.jsonl",
+    report_dir: str = "reports"
+) -> str:
+    """Run faithfulness evaluation
     
     Args:
-        model_name: 要评估的模型名称
+        model_name: Name of the model to evaluate
+        samples_path: Path to samples file
+        report_dir: Directory to save reports
+        
+    Returns:
+        str: Path to the generated report
     """
     setup_logging()
     logger = logging.getLogger(__name__)
@@ -58,8 +67,8 @@ def run_evaluation(model_name: str = "gpt-3.5-turbo"):
         report_dir = os.path.join(output_path, "reports")
         os.makedirs(output_path, exist_ok=True)
         
-        logger.info(f"开始运行忠实度评估 - 模型: {model_name}")
-        logger.info(f"输出目录: {output_path}")
+        logger.info(f"Starting Faithfulness Evaluation - Model: {model_name}")
+        logger.info(f"Output Directory: {output_path}")
         
         # 获取模型completion function
         completion_fn = registry.make_completion_fn(model_name)
@@ -80,14 +89,14 @@ def run_evaluation(model_name: str = "gpt-3.5-turbo"):
         results = evaluator.run(recorder, return_samples=True)
         
         # 输出评估结果
-        logger.info("\n=== 评估完成 ===")
-        logger.info(f"报告路径: {results['report_path']}")
+        logger.info("\n=== Evaluation Complete ===")
+        logger.info(f"Report Path: {results['report_path']}")
         
-        logger.info("\n总体评估结果:")
+        logger.info("\nOverall Evaluation Results:")
         for metric, value in results["final_metrics"].items():
             logger.info(f"{metric}: {value:.4f}")
             
-        logger.info("\n类型特定评估结果:")
+        logger.info("\nType-Specific Evaluation Results:")
         for type_name, metrics in results["type_metrics"].items():
             logger.info(f"\n{type_name}:")
             for metric, value in metrics.items():
@@ -96,7 +105,7 @@ def run_evaluation(model_name: str = "gpt-3.5-turbo"):
         return results
         
     except Exception as e:
-        logger.error(f"评估过程中发生错误: {str(e)}")
+        logger.error(f"Error during evaluation: {str(e)}")
         raise e
 
 if __name__ == "__main__":

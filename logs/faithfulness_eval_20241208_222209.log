@@ -1,0 +1,100 @@
+2024-12-08 22:22:09,694 - INFO - Starting Faithfulness Evaluation - Model: gpt-3.5-turbo
+2024-12-08 22:22:09,694 - INFO - Output Directory: results/faithfulness_eval_20241208_222209
+2024-12-08 22:22:12,175 - INFO - Fetching evals/registry/data/faithfulness/samples.jsonl
+2024-12-08 22:22:12,540 - INFO - Retrying request to /chat/completions in 0.415643 seconds
+2024-12-08 22:22:13,272 - INFO - Retrying request to /chat/completions in 0.938786 seconds
+2024-12-08 22:22:24,583 - INFO - Retrying request to /chat/completions in 0.430317 seconds
+2024-12-08 22:22:30,717 - INFO - Retrying request to /chat/completions in 0.469274 seconds
+2024-12-08 22:22:31,506 - INFO - Retrying request to /chat/completions in 0.798628 seconds
+2024-12-08 22:22:48,683 - INFO - Retrying request to /chat/completions in 0.421742 seconds
+2024-12-08 22:22:58,728 - INFO - Retrying request to /chat/completions in 0.448907 seconds
+2024-12-08 22:23:05,543 - INFO - Retrying request to /chat/completions in 0.399075 seconds
+2024-12-08 22:23:16,458 - INFO - Retrying request to /chat/completions in 0.496853 seconds
+2024-12-08 22:23:17,260 - INFO - Retrying request to /chat/completions in 0.780368 seconds
+2024-12-08 22:23:34,341 - INFO - 评估报告已生成: results/faithfulness_eval_20241208_222209/reports/report_20241208_222332/report.md
+2024-12-08 22:23:34,341 - INFO - 
+=== Evaluation Complete ===
+2024-12-08 22:23:34,341 - INFO - Report Path: results/faithfulness_eval_20241208_222209/reports/report_20241208_222332/report.md
+2024-12-08 22:23:34,341 - INFO - 
+Overall Evaluation Results:
+2024-12-08 22:23:34,341 - INFO - factual_accuracy: 0.8084
+2024-12-08 22:23:34,341 - INFO - logical_coherence: 0.3543
+2024-12-08 22:23:34,341 - INFO - context_relevance: 0.7590
+2024-12-08 22:23:34,341 - INFO - interpretative_reasoning: 0.6505
+2024-12-08 22:23:34,341 - INFO - information_completeness: 0.7460
+2024-12-08 22:23:34,341 - INFO - hallucination_score: 0.2799
+2024-12-08 22:23:34,341 - INFO - overall_faithfulness: 0.6355
+2024-12-08 22:23:34,341 - INFO - 
+Type-Specific Evaluation Results:
+2024-12-08 22:23:34,342 - INFO - 
+economic_analysis:
+2024-12-08 22:23:34,342 - INFO -   factual_accuracy: 0.7974
+2024-12-08 22:23:34,342 - INFO -   logical_coherence: 0.3695
+2024-12-08 22:23:34,342 - INFO -   context_relevance: 0.7016
+2024-12-08 22:23:34,342 - INFO -   interpretative_reasoning: 0.6423
+2024-12-08 22:23:34,342 - INFO -   information_completeness: 0.7085
+2024-12-08 22:23:34,342 - INFO -   hallucination_score: 0.2550
+2024-12-08 22:23:34,342 - INFO -   overall_faithfulness: 0.6081
+2024-12-08 22:23:34,342 - INFO - 
+current_events:
+2024-12-08 22:23:34,342 - INFO -   factual_accuracy: 0.8426
+2024-12-08 22:23:34,342 - INFO -   logical_coherence: 0.4786
+2024-12-08 22:23:34,342 - INFO -   context_relevance: 0.8519
+2024-12-08 22:23:34,342 - INFO -   interpretative_reasoning: 0.5958
+2024-12-08 22:23:34,342 - INFO -   information_completeness: 0.7171
+2024-12-08 22:23:34,342 - INFO -   hallucination_score: 0.4872
+2024-12-08 22:23:34,342 - INFO -   overall_faithfulness: 0.7171
+2024-12-08 22:23:34,342 - INFO - 
+medical_advice:
+2024-12-08 22:23:34,342 - INFO -   factual_accuracy: 0.8171
+2024-12-08 22:23:34,342 - INFO -   logical_coherence: 0.3671
+2024-12-08 22:23:34,342 - INFO -   context_relevance: 0.7557
+2024-12-08 22:23:34,342 - INFO -   interpretative_reasoning: 0.7061
+2024-12-08 22:23:34,342 - INFO -   information_completeness: 0.8172
+2024-12-08 22:23:34,342 - INFO -   hallucination_score: 0.2728
+2024-12-08 22:23:34,342 - INFO -   overall_faithfulness: 0.6693
+2024-12-08 22:23:34,342 - INFO - 
+scientific_explanation:
+2024-12-08 22:23:34,342 - INFO -   factual_accuracy: 0.8103
+2024-12-08 22:23:34,342 - INFO -   logical_coherence: 0.5594
+2024-12-08 22:23:34,342 - INFO -   context_relevance: 0.7779
+2024-12-08 22:23:34,342 - INFO -   interpretative_reasoning: 0.7533
+2024-12-08 22:23:34,342 - INFO -   information_completeness: 0.8192
+2024-12-08 22:23:34,342 - INFO -   hallucination_score: 0.5262
+2024-12-08 22:23:34,342 - INFO -   overall_faithfulness: 0.7180
+2024-12-08 22:23:34,342 - INFO - 
+technical_analysis:
+2024-12-08 22:23:34,342 - INFO -   factual_accuracy: 0.8076
+2024-12-08 22:23:34,342 - INFO -   logical_coherence: 0.1977
+2024-12-08 22:23:34,342 - INFO -   context_relevance: 0.7586
+2024-12-08 22:23:34,342 - INFO -   interpretative_reasoning: 0.6174
+2024-12-08 22:23:34,342 - INFO -   information_completeness: 0.7094
+2024-12-08 22:23:34,342 - INFO -   hallucination_score: 0.1548
+2024-12-08 22:23:34,342 - INFO -   overall_faithfulness: 0.5676
+2024-12-08 22:23:34,342 - INFO - 
+historical_analysis:
+2024-12-08 22:23:34,342 - INFO -   factual_accuracy: 0.7981
+2024-12-08 22:23:34,342 - INFO -   logical_coherence: 0.2597
+2024-12-08 22:23:34,342 - INFO -   context_relevance: 0.7872
+2024-12-08 22:23:34,342 - INFO -   interpretative_reasoning: 0.6698
+2024-12-08 22:23:34,342 - INFO -   information_completeness: 0.7638
+2024-12-08 22:23:34,342 - INFO -   hallucination_score: 0.1256
+2024-12-08 22:23:34,342 - INFO -   overall_faithfulness: 0.6194
+2024-12-08 22:23:34,343 - INFO - 
+environmental_impact:
+2024-12-08 22:23:34,343 - INFO -   factual_accuracy: 0.8392
+2024-12-08 22:23:34,343 - INFO -   logical_coherence: 0.4302
+2024-12-08 22:23:34,343 - INFO -   context_relevance: 0.6369
+2024-12-08 22:23:34,343 - INFO -   interpretative_reasoning: 0.5932
+2024-12-08 22:23:34,343 - INFO -   information_completeness: 0.6844
+2024-12-08 22:23:34,343 - INFO -   hallucination_score: 0.2553
+2024-12-08 22:23:34,343 - INFO -   overall_faithfulness: 0.6244
+2024-12-08 22:23:34,343 - INFO - 
+policy_analysis:
+2024-12-08 22:23:34,343 - INFO -   factual_accuracy: 0.7548
+2024-12-08 22:23:34,343 - INFO -   logical_coherence: 0.1722
+2024-12-08 22:23:34,343 - INFO -   context_relevance: 0.8021
+2024-12-08 22:23:34,343 - INFO -   interpretative_reasoning: 0.6262
+2024-12-08 22:23:34,343 - INFO -   information_completeness: 0.7487
+2024-12-08 22:23:34,343 - INFO -   hallucination_score: 0.1626
+2024-12-08 22:23:34,343 - INFO -   overall_faithfulness: 0.5598

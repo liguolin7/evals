@@ -11,6 +11,11 @@ import os
 logger = logging.getLogger(__name__)
 
 class FaithfulnessEval(Eval):
+    """Faithfulness Evaluation Framework
+    
+    This class implements the faithfulness evaluation framework for LLM responses.
+    """
+    
     # 定义不同类型的评估权重
     TYPE_WEIGHTS = {
         "general": {  # 添加通用类型的权重配置
@@ -96,6 +101,15 @@ class FaithfulnessEval(Eval):
         report_dir: str = "reports",
         **kwargs,
     ):
+        """Initialize evaluator
+        
+        Args:
+            completion_fns: List of completion functions to evaluate
+            eval_registry_path: Path to the evaluation registry
+            samples_jsonl: Path to the samples JSONL file
+            seed: Random seed for reproducibility
+            report_dir: Directory to save the evaluation report
+        """
         super().__init__(
             completion_fns=completion_fns,
             eval_registry_path=eval_registry_path,
@@ -229,7 +243,7 @@ class FaithfulnessEval(Eval):
             type_metrics=type_averages,
             sample_results=sample_results
         )
-        logger.info(f"评估报告已生成: {report_path}")
+        logger.info(f"Evaluation report generated: {report_path}")
         
         if return_samples:
             return {

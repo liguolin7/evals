@@ -1,0 +1,9 @@
+{
+  "factual_accuracy": 0.8104115724563599,
+  "logical_coherence": 0.3643090291880071,
+  "context_relevance": 0.7614847011864185,
+  "interpretative_reasoning": 0.6378889329731466,
+  "information_completeness": 0.7419392449066353,
+  "hallucination_score": 0.30231345065403736,
+  "overall_faithfulness": 0.6376101328384349
+}
