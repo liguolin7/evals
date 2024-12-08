@@ -1,0 +1,5 @@
+faithfulness_eval:
+  id: faithfulness_eval.v1
+  description: A framework for evaluating the faithfulness of LLM responses beyond context matching
+  metrics: [factual_accuracy, logical_coherence, context_relevance, overall_faithfulness]
+  class: evals.elsuite.faithfulness.eval:FaithfulnessEval 
