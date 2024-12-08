@@ -80,6 +80,23 @@ class FaithfulnessReport:
         content.append("|------|------|")
         for metric, score in final_metrics.items():
             content.append(f"| {metric} | {score:.4f} |")
+        
+        # 添加可视化图表引用
+        content.append("\n### 1.2 可视化分析")
+        content.append("\n#### 1.2.1 总体评估雷达图")
+        content.append("![总体评估雷达图](overall_metrics_radar.png)")
+        
+        content.append("\n#### 1.2.2 评估指标热力图")
+        content.append("![评估指标热力图](metrics_heatmap.png)")
+        
+        content.append("\n#### 1.2.3 评估指标分布")
+        content.append("![评估指标箱线图](metrics_boxplot.png)")
+        
+        content.append("\n#### 1.2.4 评估指标趋势")
+        content.append("![评估指标趋势图](metrics_trend.png)")
+        
+        content.append("\n#### 1.2.5 评估指标构成")
+        content.append("![评估指标堆叠柱状图](metrics_stacked_bar.png)")
             
         # 3. 类型特定评估结果
         content.append("\n## 2. 类型特定评估结果")
@@ -89,6 +106,7 @@ class FaithfulnessReport:
             content.append("|------|------|")
             for metric, score in metrics.items():
                 content.append(f"| {metric} | {score:.4f} |")
+            content.append(f"\n![{sample_type}雷达图]({sample_type}_radar.png)")
                 
         # 4. 样本分析
         content.append("\n## 3. 样本分析")
@@ -100,7 +118,7 @@ class FaithfulnessReport:
             sample_type = result["type"]
             type_counts[sample_type] = type_counts.get(sample_type, 0) + 1
             
-        content.append("\n### 3.1 样��类型分布")
+        content.append("\n### 3.1 样本类型分布")
         content.append("| 类型 | 数量 | 占比 |")
         content.append("|------|------|------|")
         for sample_type, count in type_counts.items():
@@ -151,6 +169,22 @@ class FaithfulnessReport:
         for sample_type, metrics in type_metrics.items():
             self._plot_radar_chart(metrics, f"{sample_type}评估指标",
                                  os.path.join(report_dir, f"{sample_type}_radar.png"))
+        
+        # 4. 热力图
+        self._plot_heatmap(type_metrics,
+                          os.path.join(report_dir, "metrics_heatmap.png"))
+        
+        # 5. 箱线图
+        self._plot_boxplot(type_metrics,
+                          os.path.join(report_dir, "metrics_boxplot.png"))
+        
+        # 6. 趋势图
+        self._plot_trend(type_metrics,
+                        os.path.join(report_dir, "metrics_trend.png"))
+        
+        # 7. 堆叠柱状图
+        self._plot_stacked_bar(type_metrics,
+                             os.path.join(report_dir, "metrics_stacked_bar.png"))
     
     def _plot_radar_chart(self, metrics: Dict[str, float], title: str, save_path: str):
         """绘制雷达图"""
@@ -192,6 +226,100 @@ class FaithfulnessReport:
         plt.title("各类型评估指标对比")
         plt.xlabel("样本类型")
         plt.ylabel("得分")
+        
+        # 调整布局
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        
+        # 保存图表
+        plt.savefig(save_path)
+        plt.close()
+    
+    def _plot_heatmap(self, type_metrics: Dict[str, Dict[str, float]], save_path: str):
+        """绘制热力图"""
+        # 准备数据
+        df = pd.DataFrame(type_metrics).T
+        
+        # 创建图表
+        plt.figure(figsize=(12, 8))
+        sns.heatmap(df, annot=True, cmap='YlOrRd', fmt='.2f', cbar_kws={'label': '得分'})
+        
+        # 设置标题和标签
+        plt.title("各类型评估指标热力图")
+        plt.xlabel("评估指标")
+        plt.ylabel("样本类型")
+        
+        # 调整布局
+        plt.tight_layout()
+        
+        # 保存图表
+        plt.savefig(save_path)
+        plt.close()
+    
+    def _plot_boxplot(self, type_metrics: Dict[str, Dict[str, float]], save_path: str):
+        """绘制箱线图"""
+        # 准备数据
+        df = pd.DataFrame(type_metrics).T
+        
+        # 创建图表
+        plt.figure(figsize=(12, 6))
+        df.boxplot()
+        
+        # 设置标题和标签
+        plt.title("评估指标分布箱线图")
+        plt.xlabel("评估指标")
+        plt.ylabel("得分")
+        
+        # 调整布局
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        
+        # 保存图表
+        plt.savefig(save_path)
+        plt.close()
+    
+    def _plot_trend(self, type_metrics: Dict[str, Dict[str, float]], save_path: str):
+        """绘制趋势图"""
+        # 准备数据
+        df = pd.DataFrame(type_metrics).T
+        
+        # 创建图表
+        plt.figure(figsize=(12, 6))
+        for column in df.columns:
+            plt.plot(df.index, df[column], marker='o', label=column)
+        
+        # 设置标题和标签
+        plt.title("各类型评估指标趋势")
+        plt.xlabel("样本类型")
+        plt.ylabel("得分")
+        
+        # 添加图例
+        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+        
+        # 调整布局
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        
+        # 保存图表
+        plt.savefig(save_path)
+        plt.close()
+    
+    def _plot_stacked_bar(self, type_metrics: Dict[str, Dict[str, float]], save_path: str):
+        """绘制堆叠柱状图"""
+        # 准备数据
+        df = pd.DataFrame(type_metrics).T
+        
+        # 创建图表
+        plt.figure(figsize=(12, 6))
+        df.plot(kind='bar', stacked=True)
+        
+        # 设置标题和标签
+        plt.title("各类型评估指标构成")
+        plt.xlabel("样本类型")
+        plt.ylabel("得分")
+        
+        # 添加图例
+        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
         
         # 调整布局
         plt.xticks(rotation=45)
