@@ -33,16 +33,26 @@ class FaithfulnessEval(Eval):
         # 构建提示词
         prompt = f"Context: {context}\nQuestion: {query}"
         
-        # 获取模型响应
+        # 获取模���响应
         result = self.completion_fn(prompt=prompt)
         response = result.get_completions()[0]
         
-        # 评估指标
+        # 基础评估指标
         metrics = {
             "factual_accuracy": self.metrics_calculator.calculate_factual_accuracy(response, reference),
             "logical_coherence": self.metrics_calculator.calculate_logical_coherence(response),
             "context_relevance": self.metrics_calculator.calculate_context_relevance(response, context)
         }
+        
+        # 高级评估指标
+        advanced_metrics = {
+            "interpretative_reasoning": self.metrics_calculator.calculate_interpretative_reasoning(response, context),
+            "information_completeness": self.metrics_calculator.calculate_information_completeness(response, reference),
+            "hallucination_score": self.metrics_calculator.calculate_hallucination_score(response, context)
+        }
+        
+        # 合并所有指标
+        metrics.update(advanced_metrics)
         
         # 计算综合分数
         metrics["overall_faithfulness"] = self.metrics_calculator.calculate_overall_faithfulness(metrics)
@@ -50,7 +60,8 @@ class FaithfulnessEval(Eval):
         return {
             "sample": sample,
             "response": response,
-            "metrics": metrics
+            "metrics": metrics,
+            "prompt": prompt  # 添加提示词以便分析
         }
 
     def run(self, recorder: RecorderBase, return_samples: bool = False) -> Union[Dict[str, float], Dict[str, Any]]:
@@ -78,8 +89,18 @@ class FaithfulnessEval(Eval):
                     sample_results.append(result)
         
         # 计算平均分数
+        metric_names = [
+            "factual_accuracy",
+            "logical_coherence", 
+            "context_relevance",
+            "interpretative_reasoning",
+            "information_completeness",
+            "hallucination_score",
+            "overall_faithfulness"
+        ]
+        
         final_metrics = {}
-        for metric in ["factual_accuracy", "logical_coherence", "context_relevance", "overall_faithfulness"]:
+        for metric in metric_names:
             scores = [r["metrics"][metric] for r in sample_results if r is not None and metric in r["metrics"]]
             if scores:
                 final_metrics[metric] = sum(scores) / len(scores)
