@@ -1,5 +1,0 @@
-2024-12-08 22:07:35,918 - INFO - 开始运行忠实度评估 - 模型: gpt-3.5-turbo
-2024-12-08 22:07:35,918 - INFO - 输出目录: results/faithfulness_eval_20241208_220735
-2024-12-08 22:07:38,094 - INFO - Fetching evals/registry/data/faithfulness/samples.jsonl
-2024-12-08 22:07:38,094 - ERROR - Error parsing JSON on line 3: Expecting value at evals/registry/data/faithfulness/samples.jsonl:3:1
-2024-12-08 22:07:38,095 - ERROR - 评估过程中发生错误: Error parsing JSON on line 3: Expecting value at evals/registry/data/faithfulness/samples.jsonl:3:1

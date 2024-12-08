@@ -86,13 +86,50 @@ class FaithfulnessMetrics:
     def calculate_context_relevance(self, response: str, context: str) -> float:
         """计算上下文相关性分数
         
-        评估响应与给定上下文的相关程度
+        评估响应与给定上下文的相关程度:
+        1. 语义相关性
+        2. 关键信息覆盖
+        3. 主题一致性
         """
+        # 语义相关性评分
         response_emb = self.get_embeddings(response)
         context_emb = self.get_embeddings(context)
+        semantic_relevance = cosine_similarity(response_emb, context_emb)[0][0]
         
-        similarity = cosine_similarity(response_emb, context_emb)[0][0]
-        return float(similarity)
+        # 关键信息覆盖评分
+        def extract_key_info(text):
+            # 提取命名实体、数字和关键词
+            entities = re.findall(r'[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*', text)
+            numbers = re.findall(r'\d+(?:\.\d+)?%?', text)
+            # 提取可能的关键词（大写字母开头的词）
+            keywords = re.findall(r'\b[A-Z][a-zA-Z]*\b', text)
+            return set(entities + numbers + keywords)
+        
+        context_info = extract_key_info(context)
+        response_info = extract_key_info(response)
+        
+        coverage_score = len(context_info.intersection(response_info)) / len(context_info) if context_info else 1.0
+        
+        # 主题一致性评分
+        def get_topic_words(text):
+            # 获取文本中最重要的词（非停用词）
+            words = text.lower().split()
+            stop_words = self._get_stopwords()
+            return set(word for word in words if word not in stop_words)
+        
+        context_topics = get_topic_words(context)
+        response_topics = get_topic_words(response)
+        
+        topic_score = len(context_topics.intersection(response_topics)) / len(context_topics) if context_topics else 1.0
+        
+        # 综合评分
+        final_score = (
+            semantic_relevance * 0.4 +
+            coverage_score * 0.3 +
+            topic_score * 0.3
+        )
+        
+        return float(final_score)
 
     def calculate_interpretative_reasoning(self, response: str, context: str) -> float:
         """评估解释性推理能力
@@ -189,8 +226,12 @@ class FaithfulnessMetrics:
         return float(final_score)
 
     def calculate_overall_faithfulness(self, metrics: Dict[str, float]) -> float:
-        """计算综合忠实度分数"""
-        weights = {
+        """计算综合忠实度分数
+        
+        根据不同场景类型调整权重
+        """
+        # 基础权重
+        base_weights = {
             "factual_accuracy": 0.25,
             "logical_coherence": 0.15,
             "context_relevance": 0.15,
@@ -199,9 +240,29 @@ class FaithfulnessMetrics:
             "hallucination_score": 0.15
         }
         
+        # 根据评分情况动态调整权重
+        if metrics.get("factual_accuracy", 0) < 0.5:
+            # 如果事实准确性较低，增加其权重
+            base_weights["factual_accuracy"] = 0.35
+            base_weights["hallucination_score"] = 0.20
+            # 相应减少其他权重
+            for k in base_weights:
+                if k not in ["factual_accuracy", "hallucination_score"]:
+                    base_weights[k] = (1 - 0.55) / 4
+        
+        elif metrics.get("hallucination_score", 0) < 0.5:
+            # 如果存在严重幻觉，增加幻觉分数的权重
+            base_weights["hallucination_score"] = 0.25
+            base_weights["factual_accuracy"] = 0.30
+            # 相应减少其他权重
+            for k in base_weights:
+                if k not in ["hallucination_score", "factual_accuracy"]:
+                    base_weights[k] = (1 - 0.55) / 4
+        
+        # 计算加权平均分
         overall_score = sum(
             metrics[metric] * weight 
-            for metric, weight in weights.items() 
+            for metric, weight in base_weights.items() 
             if metric in metrics
         )
         

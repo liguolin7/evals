@@ -1,3 +1,0 @@
-2024-12-08 22:07:00,775 - INFO - 开始运行忠实度评估 - 模型: gpt-3.5-turbo
-2024-12-08 22:07:00,775 - INFO - 输出目录: results/faithfulness_eval_20241208_220700
-2024-12-08 22:07:03,534 - ERROR - 评估过程中发生错误: 'FaithfulnessEval' object has no attribute 'recorder'
