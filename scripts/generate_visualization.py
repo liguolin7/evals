@@ -5,110 +5,169 @@ import matplotlib.pyplot as plt
 import numpy as np
 from typing import Dict
 
-def create_type_comparison_chart(results: Dict[str, Dict[str, float]], output_path: str):
-    """创建优化后的类型比较图表
+def create_model_comparison_chart(model_results: Dict[str, Dict[str, float]], output_path: str):
+    """Create model comparison chart
     
     Args:
-        results: 评估结果字典
-        output_path: 输出文件路径
+        model_results: Dictionary containing evaluation results for different models
+        output_path: Output file path
     """
-    # 设置图表样式
     plt.style.use('default')
+    fig, ax = plt.subplots(figsize=(14, 7))
     
-    # 创建图表和子图
-    fig = plt.figure(figsize=(18, 8))  # 增加总宽度以容纳类型列表
-    gs = fig.add_gridspec(1, 2, width_ratios=[3, 1])  # 3:1 的宽度比
-    ax1 = fig.add_subplot(gs[0])  # 主图表
-    ax2 = fig.add_subplot(gs[1])  # 类型列表
-    
-    # 准备数据
-    types = list(results.keys())
-    type_indices = list(range(1, len(types) + 1))  # 创建序号列表
     metrics = ['factual_accuracy', 'logical_coherence', 'context_relevance',
               'interpretative_reasoning', 'information_completeness', 
               'hallucination_score', 'overall_faithfulness']
     
-    # 设置颜色
-    colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2']
+    x = np.arange(len(metrics))
+    width = 0.25  # Reduced width to accommodate three bars
     
-    # 设置柱状图参数
-    x = np.arange(len(types))
-    width = 0.11
+    # Set colors
+    colors = ['#2ecc71', '#3498db', '#e74c3c']  # Green, Blue, Red
     
-    # 绘制柱状图
-    for i, (metric, color) in enumerate(zip(metrics, colors)):
-        values = [results[t][metric] for t in types]
-        ax1.bar(x + i * width, values, width, label=metric, color=color)
+    # Create bars for each model
+    for i, (model_name, results) in enumerate(model_results.items()):
+        values = [results[metric] for metric in metrics]
+        ax.bar(x + i * width, values, width, label=model_name, color=colors[i], alpha=0.8)
     
-    # 设置主图表的标题和标签
-    ax1.set_title('Type-Specific Metrics Comparison', fontsize=14, pad=20)
-    ax1.set_xlabel('Sample Type Index', fontsize=12, labelpad=10)
-    ax1.set_ylabel('Score', fontsize=12)
+    # Set chart title and labels
+    ax.set_title('Model Performance Comparison', fontsize=14, pad=20)
+    ax.set_xlabel('Metrics', fontsize=12)
+    ax.set_ylabel('Score', fontsize=12)
     
-    # 设置x轴为序号
-    ax1.set_xticks(x + width * 3)
-    ax1.set_xticklabels(type_indices)
+    # Set x-axis labels
+    ax.set_xticks(x + width)
+    plt.xticks(x + width, metrics, rotation=45, ha='right')
     
-    # 设置图例
-    ax1.legend(bbox_to_anchor=(1.02, 1),
-              loc='upper left',
-              fontsize=10,
-              frameon=True)
+    # Set legend
+    ax.legend()
     
-    # 设置网格线
-    ax1.grid(True, axis='y', linestyle='--', alpha=0.7)
+    # Set grid
+    ax.grid(True, axis='y', linestyle='--', alpha=0.7)
     
-    # 设置y轴范围
-    ax1.set_ylim(0, 1.0)
+    # Set y-axis range
+    ax.set_ylim(0, 1.0)
     
-    # 创建类型对照表
-    ax2.axis('off')  # 关闭坐标轴
-    cell_text = [[f"{i+1}. {t}"] for i, t in enumerate(types)]
-    table = ax2.table(cellText=cell_text,
-                     loc='center right',
-                     cellLoc='left',
-                     edges='open')  # 移除单元格边框
-    
-    # 设置表格样式
-    table.auto_set_font_size(False)
-    table.set_fontsize(10)
-    table.scale(1.2, 1.8)  # 调整单元格大小
-    
-    # 为表格添加标题
-    ax2.text(0.5, 1.02, 'Sample Types',
-             horizontalalignment='center',
-             fontsize=12,
-             transform=ax2.transAxes)
-    
-    # 调整布局
+    # Adjust layout
     plt.tight_layout()
     
-    # 保存图表
+    # Save chart
     plt.savefig(output_path,
                 bbox_inches='tight',
                 dpi=300,
                 facecolor='white',
                 edgecolor='none')
     
-    # 关闭图表
+    # Close figure
+    plt.close()
+
+def create_type_comparison_chart(gpt35_results: Dict[str, Dict[str, float]], 
+                               gpt4_turbo_results: Dict[str, Dict[str, float]],
+                               gpt4_results: Dict[str, Dict[str, float]], 
+                               output_path: str):
+    """Create type comparison chart
+    
+    Args:
+        gpt35_results: Type evaluation results for GPT-3.5
+        gpt4_turbo_results: Type evaluation results for GPT-4 Turbo
+        gpt4_results: Type evaluation results for GPT-4
+        output_path: Output file path
+    """
+    plt.style.use('default')
+    fig, ax = plt.subplots(figsize=(15, 8))
+    
+    types = list(gpt35_results.keys())
+    x = np.arange(len(types))
+    width = 0.25  # Reduced width to accommodate three bars
+    
+    # Set colors
+    colors = ['#2ecc71', '#3498db', '#e74c3c']  # Green, Blue, Red
+    
+    # Plot GPT-3.5 results
+    gpt35_values = [gpt35_results[t]['overall_faithfulness'] for t in types]
+    ax.bar(x - width, gpt35_values, width, label='GPT-3.5 Turbo', color=colors[0], alpha=0.8)
+    
+    # Plot GPT-4 Turbo results
+    gpt4_turbo_values = [gpt4_turbo_results[t]['overall_faithfulness'] for t in types]
+    ax.bar(x, gpt4_turbo_values, width, label='GPT-4 Turbo', color=colors[1], alpha=0.8)
+    
+    # Plot GPT-4 results
+    gpt4_values = [gpt4_results[t]['overall_faithfulness'] for t in types]
+    ax.bar(x + width, gpt4_values, width, label='GPT-4', color=colors[2], alpha=0.8)
+    
+    # Set chart title and labels
+    ax.set_title('Model Performance Comparison by Sample Type', fontsize=14, pad=20)
+    ax.set_xlabel('Sample Type', fontsize=12)
+    ax.set_ylabel('Overall Faithfulness Score', fontsize=12)
+    
+    # Set x-axis labels
+    ax.set_xticks(x)
+    plt.xticks(x, [t.replace('_', ' ').title() for t in types], rotation=45, ha='right')
+    
+    # Set legend
+    ax.legend()
+    
+    # Set grid
+    ax.grid(True, axis='y', linestyle='--', alpha=0.7)
+    
+    # Set y-axis range
+    ax.set_ylim(0, 1.0)
+    
+    # Adjust layout
+    plt.tight_layout()
+    
+    # Save chart
+    plt.savefig(output_path,
+                bbox_inches='tight',
+                dpi=300,
+                facecolor='white',
+                edgecolor='none')
+    
+    # Close figure
     plt.close()
 
 def main():
-    # 设置输入输出路径
-    results_dir = "results/faithfulness_eval_20241209_020856/reports/report_20241209_021054"
+    # Set input and output paths
+    gpt35_base = "results/faithfulness_eval_20241209_024454/reports/report_20241209_024534"
+    gpt4_turbo_base = "results/faithfulness_eval_20241209_024611/reports/report_20241209_024906"
+    gpt4_base = "results/faithfulness_eval_20241209_025136/reports/report_20241209_025338"
     output_dir = "visualizations"
     
-    # 创建输出目录
+    # Create output directory
     os.makedirs(output_dir, exist_ok=True)
     
-    # 读取类型指标数据
-    with open(os.path.join(results_dir, "type_metrics.json"), "r") as f:
-        type_metrics = json.load(f)
+    # Read final metrics data
+    with open(os.path.join(gpt35_base, "final_metrics.json"), "r") as f:
+        gpt35_final = json.load(f)
+    with open(os.path.join(gpt4_turbo_base, "final_metrics.json"), "r") as f:
+        gpt4_turbo_final = json.load(f)
+    with open(os.path.join(gpt4_base, "final_metrics.json"), "r") as f:
+        gpt4_final = json.load(f)
     
-    # 生成图表
-    output_path = os.path.join(output_dir, "type_comparison.png")
-    create_type_comparison_chart(type_metrics, output_path)
-    print(f"图表已生成: {output_path}")
+    # Prepare model comparison data
+    model_results = {
+        "GPT-3.5 Turbo": gpt35_final,
+        "GPT-4 Turbo": gpt4_turbo_final,
+        "GPT-4": gpt4_final
+    }
+    
+    # Generate model comparison chart
+    model_comparison_path = os.path.join(output_dir, "model_comparison.png")
+    create_model_comparison_chart(model_results, model_comparison_path)
+    print(f"Model comparison chart generated: {model_comparison_path}")
+    
+    # Read type metrics data
+    with open(os.path.join(gpt35_base, "type_metrics.json"), "r") as f:
+        gpt35_types = json.load(f)
+    with open(os.path.join(gpt4_turbo_base, "type_metrics.json"), "r") as f:
+        gpt4_turbo_types = json.load(f)
+    with open(os.path.join(gpt4_base, "type_metrics.json"), "r") as f:
+        gpt4_types = json.load(f)
+    
+    # Generate type comparison chart
+    type_comparison_path = os.path.join(output_dir, "type_comparison.png")
+    create_type_comparison_chart(gpt35_types, gpt4_turbo_types, gpt4_types, type_comparison_path)
+    print(f"Type comparison chart generated: {type_comparison_path}")
 
 if __name__ == "__main__":
     main() 
