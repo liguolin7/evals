@@ -1,99 +1,330 @@
-# OpenAI Evals
+# LLM Faithfulness Evaluation Framework
 
-Evals provide a framework for evaluating large language models (LLMs) or systems built using LLMs. We offer an existing registry of evals to test different dimensions of OpenAI models and the ability to write your own custom evals for use cases you care about. You can also use your data to build private evals which represent the common LLMs patterns in your workflow without exposing any of that data publicly.
+This project is developed based on the OpenAI Evals framework, focusing on evaluating the faithfulness of Large Language Model (LLM) outputs beyond simple context matching.
 
-If you are building with LLMs, creating high quality evals is one of the most impactful things you can do. Without evals, it can be very difficult and time intensive to understand how different model versions might affect your use case. In the words of [OpenAI's President Greg Brockman](https://twitter.com/gdb/status/1733553161884127435):
+## Overview
 
-<img width="596" alt="https://x.com/gdb/status/1733553161884127435?s=20" src="https://github.com/openai/evals/assets/35577566/ce7840ff-43a8-4d88-bb2f-6b207410333b">
+As Large Language Models become increasingly sophisticated, ensuring the faithfulness of their responses becomes crucial. This framework provides a comprehensive evaluation system that assesses multiple dimensions of response faithfulness:
 
-## Setup
+- Factual Accuracy
+- Logical Coherence
+- Context Relevance
+- Interpretative Reasoning
+- Information Completeness
+- Hallucination Detection
 
-To run evals, you will need to set up and specify your [OpenAI API key](https://platform.openai.com/account/api-keys). After you obtain an API key, specify it using the [`OPENAI_API_KEY` environment variable](https://platform.openai.com/docs/quickstart/step-2-setup-your-api-key). Please be aware of the [costs](https://openai.com/pricing) associated with using the API when running evals. You can also run and create evals using [Weights & Biases](https://wandb.ai/wandb_fc/openai-evals/reports/OpenAI-Evals-Demo-Using-W-B-Prompts-to-Run-Evaluations--Vmlldzo0MTI4ODA3).
+## Project Structure
 
-**Minimum Required Version: Python 3.9**
+```
+project_root/
+├── evals/
+│   └── elsuite/
+│       └── faithfulness/
+│           ├── __init__.py
+│           ├── eval.py           # Core evaluation implementation
+│           ├── metrics.py        # Metric calculation functions
+│           ├── report.py         # Report generation
+│           ├── run.py           # CLI interface
+│           ├── utils.py         # Utility functions
+│           ├── run_tests.py     # Test runner
+│           ├── test_eval.py     # Unit tests
+│           └── test_report.py   # Report tests
+├── scripts/
+│   └── generate_visualization.py  # Visualization tools
+├── requirements.txt              # Project dependencies
+```
 
-### Downloading evals
+## Installation
 
-Our evals registry is stored using [Git-LFS](https://git-lfs.com/). Once you have downloaded and installed LFS, you can fetch the evals (from within your local copy of the evals repo) with:
-```sh
+### Prerequisites
+
+- Python 3.9
+- Conda (recommended for environment management)
+- Git LFS (for downloading evaluation data)
+
+### Environment Setup
+
+1. Create and activate a new conda environment:
+```bash
+conda create -n evals_new python=3.9
+conda activate evals_new
+```
+
+2. Clone the repository:
+```bash
+git clone https://github.com/liguolin7/evals.git
 cd evals
-git lfs fetch --all
-git lfs pull
 ```
 
-This will populate all the pointer files under `evals/registry/data`.
-
-You may just want to fetch data for a select eval. You can achieve this via:
-```sh
-git lfs fetch --include=evals/registry/data/${your eval}
-git lfs pull
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
 ```
 
-### Making evals
-
-If you are going to be creating evals, we suggest cloning this repo directly from GitHub and installing the requirements using the following command:
-
-```sh
-pip install -e .
+4. Install spaCy language model:
+```bash
+python -m spacy download en_core_web_sm
 ```
 
-Using `-e`, changes you make to your eval will be reflected immediately without having to reinstall.
-
-Optionally, you can install the formatters for pre-committing with:
-
-```sh
-pip install -e .[formatters]
+5. Set up OpenAI API key:
+```bash
+export OPENAI_API_KEY="your-api-key-here"
 ```
 
-Then run `pre-commit install` to install pre-commit into your git hooks. pre-commit will now run on every commit.
+## Quick Start
 
-If you want to manually run all pre-commit hooks on a repository, run `pre-commit run --all-files`. To run individual hooks use `pre-commit run <hook_id>`.
+1. Run a basic evaluation:
+```bash
+python evals/elsuite/faithfulness/run.py --model gpt-3.5-turbo
+```
+You can replace gpt-3.5-turbo with other model names, such as gpt-4 or gpt-4-turbo.
 
-## Running evals
-
-If you don't want to contribute new evals, but simply want to run them locally, you can install the evals package via pip:
-
-```sh
-pip install evals
+2. Generate visualization:
+```bash
+python scripts/generate_visualization.py
 ```
 
-You can find the full instructions to run existing evals in [`run-evals.md`](docs/run-evals.md) and our existing eval templates in [`eval-templates.md`](docs/eval-templates.md). For more advanced use cases like prompt chains or tool-using agents, you can use our [Completion Function Protocol](docs/completion-fns.md).
+## Output Directory Structure
 
-We provide the option for you to log your eval results to a Snowflake database, if you have one or wish to set one up. For this option, you will further have to specify the `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_DATABASE`, `SNOWFLAKE_USERNAME`, and `SNOWFLAKE_PASSWORD` environment variables.
+After running the evaluation, results will be organized in the following directories:
 
-## Writing evals
+```
+project_root/
+├── logs/                          # Evaluation logs
+│   └── faithfulness_eval_*.log    # Timestamped evaluation logs
+│
+├── results/                       # Detailed evaluation results
+│   └── faithfulness_eval_*/       # Timestamped evaluation results
+│       └── reports/               # Generated reports
+│           └── report_*/          # Timestamped report directory
+│               ├── final_metrics.json     # Overall evaluation metrics
+│               ├── type_metrics.json      # Type-specific metrics
+│               ├── sample_results.json    # Individual sample results
+│               ├── report.md              # Detailed evaluation report
+│               │
+│               ├── overall_metrics_radar.png  # Overall metrics visualization
+│               ├── type_comparison.png        # Sample type comparison
+│               ├── metrics_heatmap.png        # Metrics correlation heatmap
+│               ├── metrics_boxplot.png        # Metrics distribution
+│               ├── metrics_trend.png          # Metrics trend analysis
+│               ├── metrics_stacked_bar.png    # Metrics composition
+│               │
+│               └── *_radar.png               # Type-specific radar charts
+│                   ├── scientific_explanation_radar.png
+│                   ├── medical_advice_radar.png
+│                   ├── technical_analysis_radar.png
+│                   ├── historical_analysis_radar.png
+│                   └── current_events_radar.png
+│
+└── visualizations/               # Generated model comparison charts
+    ├── model_comparison.png     # Model performance comparison
+    └── type_comparison.png      # Sample type performance comparison
+```
 
-We suggest getting starting by: 
+### Logs Directory
+- Contains detailed evaluation logs with timestamps
+- Includes model responses, error messages, and evaluation progress
+- Useful for debugging and tracking evaluation process
 
-- Walking through the process for building an eval: [`build-eval.md`](docs/build-eval.md)
-- Exploring an example of implementing custom eval logic: [`custom-eval.md`](docs/custom-eval.md)
-- Writing your own completion functions: [`completion-fns.md`](docs/completion-fns.md)
-- Review our starter guide for writing evals: [Getting Started with OpenAI Evals](https://cookbook.openai.com/examples/evaluation/getting_started_with_openai_evals)
+### Results Directory
+- Organized by evaluation timestamp
+- Contains detailed JSON files with evaluation metrics:
+  * `final_metrics.json`: Overall performance metrics
+  * `type_metrics.json`: Performance metrics by sample type
+  * `sample_results.json`: Detailed results for each evaluated sample
+- Includes comprehensive markdown report (`report.md`)
+- Generates various visualization charts:
+  * Overall performance visualizations
+  * Type-specific radar charts
+  * Metrics analysis charts (heatmap, boxplot, trend, etc.)
 
-Please note that we are currently not accepting evals with custom code! While we ask you to not submit such evals at the moment, you can still submit model-graded evals with custom model-graded YAML files.
+### Visualizations Directory
+- Contains generated model comparison charts
+- Provides comparative analysis between different models
+- Updated when running `generate_visualization.py`
 
-If you think you have an interesting eval, please open a pull request with your contribution. OpenAI staff actively review these evals when considering improvements to upcoming models.
+## Evaluation Metrics
 
-## FAQ
+### 1. Factual Accuracy (Weight: 25%)
+Measures how accurately the response reflects facts from the reference:
+- Semantic similarity
+- Key fact matching
+- Numerical accuracy
 
-Do you have any examples of how to build an eval from start to finish?
+### 2. Logical Coherence (Weight: 15%)
+Evaluates the internal logical structure:
+- Inter-sentence coherence
+- Argumentation structure
+- Logical connector usage
 
-- Yes! These are in the `examples` folder. We recommend that you also read through [`build-eval.md`](docs/build-eval.md) in order to gain a deeper understanding of what is happening in these examples.
+### 3. Context Relevance (Weight: 15%)
+Assesses how well the response relates to the given context:
+- Semantic relevance (40%)
+- Key information coverage (30%)
+- Topic consistency (30%)
 
-Do you have any examples of evals implemented in multiple different ways?
+### 4. Interpretative Reasoning (Weight: 15%)
+Evaluates the quality of reasoning and interpretation:
+- Reasoning word usage
+- Process completeness
+- Context-based conclusion
 
-- Yes! In particular, see `evals/registry/evals/coqa.yaml`. We have implemented small subsets of the [CoQA](https://stanfordnlp.github.io/coqa/) dataset for various eval templates to help illustrate the differences.
+### 5. Information Completeness (Weight: 15%)
+Checks if all key information is covered:
+- Keyword coverage
+- Information depth
+- Response comprehensiveness
 
-When I run an eval, it sometimes hangs at the very end (after the final report). What's going on?
+### 6. Hallucination Score (Weight: 15%)
+Detects potential hallucinations:
+- Context alignment
+- Fact verification
+- Source tracing
 
-- This is a known issue, but you should be able to interrupt it safely and the eval should finish immediately after.
+## Dynamic Weight Adjustment
 
-There's a lot of code, and I just want to spin up a quick eval. Help? OR,
+The framework automatically adjusts metric weights based on evaluation results:
 
-I am a world-class prompt engineer. I choose not to code. How can I contribute my wisdom?
+1. When factual accuracy is low (< 0.5):
+   - Factual accuracy weight increases to 35%
+   - Hallucination score weight increases to 20%
+   - Other metrics share the remaining 45%
 
-- If you follow an existing [eval template](docs/eval-templates.md) to build a basic or model-graded eval, you don't need to write any evaluation code at all! Just provide your data in JSON format and specify your eval parameters in YAML. [build-eval.md](docs/build-eval.md) walks you through these steps, and you can supplement these instructions with the Jupyter notebooks in the `examples` folder to help you get started quickly. Keep in mind, though, that a good eval will inevitably require careful thought and rigorous experimentation!
+2. When hallucination is severe (score < 0.5):
+   - Hallucination score weight increases to 25%
+   - Factual accuracy weight increases to 30%
+   - Other metrics share the remaining 45%
 
-## Disclaimer
+## Usage Examples
 
-By contributing to evals, you are agreeing to make your evaluation logic and data under the same MIT license as this repository. You must have adequate rights to upload any data used in an eval. OpenAI reserves the right to use this data in future service improvements to our product. Contributions to OpenAI evals will be subject to our usual Usage Policies: https://platform.openai.com/docs/usage-policies.
+### Basic Evaluation
+```python
+from evals.elsuite.faithfulness.eval import FaithfulnessEval
+from evals.record import RecorderBase
+from evals.completion_fns.openai import OpenAIChatCompletionFn
+
+# Create completion function
+completion_fn = OpenAIChatCompletionFn(model="gpt-3.5-turbo")
+
+# Create evaluator instance
+evaluator = FaithfulnessEval(
+    completion_fns=[completion_fn],
+    eval_registry_path="evals/registry/evals/faithfulness.yaml",
+    samples_jsonl="evals/registry/data/faithfulness/samples.jsonl",
+    report_dir="reports"
+)
+
+# Create recorder
+recorder = RecorderBase()
+
+# Run evaluation
+results = evaluator.run(recorder)
+print(f"Overall Faithfulness Score: {results['overall_faithfulness']:.4f}")
+```
+
+### Custom Sample Evaluation
+```python
+# Prepare a sample
+sample = {
+    "type": "scientific_explanation",
+    "context": "Recent studies show that quantum entanglement allows instantaneous correlation between particles regardless of distance.",
+    "query": "Explain quantum entanglement and its implications.",
+    "reference": "Quantum entanglement is a phenomenon where particles remain connected so that the quantum state of each particle cannot be described independently."
+}
+
+# Evaluate single sample
+result = evaluator.eval_sample(sample, random.Random(42))
+if result:
+    print("Sample Evaluation Results:")
+    for metric, score in result["metrics"].items():
+        print(f"{metric}: {score:.4f}")
+```
+
+### Batch Evaluation with Full Results
+```python
+import json
+
+# Load custom samples
+with open("your_samples.jsonl", "r") as f:
+    samples = [json.loads(line) for line in f]
+
+# Run evaluation with full results
+results = evaluator.run(recorder, return_samples=True)
+
+# Access different types of results
+print("Final Metrics:", results["final_metrics"])
+print("Type-specific Metrics:", results["type_metrics"])
+print("Report Path:", results["report_path"])
+
+# Access individual sample results
+for sample_result in results["sample_results"]:
+    print(f"\nSample Type: {sample_result['type']}")
+    print(f"Response: {sample_result['response']}")
+    print("Metrics:", sample_result["metrics"])
+```
+
+## Visualization Features
+
+The framework provides two main visualization types:
+
+1. Model Performance Comparison
+   - Compares multiple models (GPT-3.5 Turbo, GPT-4 Turbo, GPT-4) across all evaluation metrics
+   - Metrics include:
+     * Factual Accuracy
+     * Logical Coherence
+     * Context Relevance
+     * Interpretative Reasoning
+     * Information Completeness
+     * Hallucination Score
+     * Overall Faithfulness
+
+2. Sample Type Performance Analysis
+   - Shows model performance across different types of samples
+   - Compares overall faithfulness scores for each sample type
+   - Helps identify model strengths and weaknesses in specific domains
+
+To generate visualization charts:
+```bash
+python scripts/generate_visualization.py
+```
+
+The generated charts will be saved in the `visualizations` directory:
+- `model_comparison.png`: Overall performance comparison across all metrics
+- `type_comparison.png`: Performance comparison by sample type
+
+## Report Generation
+
+The framework generates comprehensive evaluation reports including:
+
+1. Overall Evaluation Results
+   - Main metrics with scores
+   - Visualization analysis
+   - Metrics radar charts
+   - Metrics heatmaps
+   - Distribution analysis
+
+2. Type-Specific Results
+   - Performance by sample type
+   - Type-specific radar charts
+   - Comparative analysis
+
+3. Sample Analysis
+   - Sample type distribution
+   - Detailed sample evaluations
+   - Performance breakdowns
+
+## Contributing
+
+We welcome contributions! Please see our contributing guidelines for more details.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+This project is built upon the OpenAI Evals framework. We thank the OpenAI team for providing the foundation for this evaluation system.
+
+## Contact
+
+For questions and feedback, please open an issue in the repository. 
