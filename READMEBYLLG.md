@@ -13,35 +13,135 @@ As Large Language Models become increasingly sophisticated, ensuring the faithfu
 - Information Completeness
 - Hallucination Detection
 
-## Installation
+## Project Structure
 
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/llm-faithfulness-eval.git
-cd llm-faithfulness-eval
+```
+project_root/
+├── evals/
+│   └── elsuite/
+│       └── faithfulness/
+│           ├── __init__.py
+│           ├── eval.py           # Core evaluation implementation
+│           ├── metrics.py        # Metric calculation functions
+│           ├── report.py         # Report generation
+│           ├── run.py           # CLI interface
+│           ├── utils.py         # Utility functions
+│           ├── run_tests.py     # Test runner
+│           ├── test_eval.py     # Unit tests
+│           └── test_report.py   # Report tests
+├── scripts/
+│   └── generate_visualization.py  # Visualization tools
+├── requirements.txt              # Project dependencies
 ```
 
-2. Install dependencies:
+## Installation
+
+### Prerequisites
+
+- Python 3.9
+- Conda (recommended for environment management)
+- Git LFS (for downloading evaluation data)
+
+### Environment Setup
+
+1. Create and activate a new conda environment:
+```bash
+conda create -n evals_new python=3.9
+conda activate evals_new
+```
+
+2. Clone the repository:
+```bash
+git clone https://github.com/liguolin7/evals.git
+cd evals
+```
+
+3. Install dependencies:
 ```bash
 pip install -r requirements.txt
+```
+
+4. Install spaCy language model:
+```bash
+python -m spacy download en_core_web_sm
+```
+
+5. Set up OpenAI API key:
+```bash
+export OPENAI_API_KEY="your-api-key-here"
 ```
 
 ## Quick Start
 
 1. Run a basic evaluation:
 ```bash
-python scripts/run_faithfulness_eval.py --model gpt-3.5-turbo
+python evals/elsuite/faithfulness/run.py --model gpt-3.5-turbo
+```
+You can replace gpt-3.5-turbo with other model names, such as gpt-4 or gpt-4-turbo.
+
+2. Generate visualization:
+```bash
+python scripts/generate_visualization.py
 ```
 
-2. Run comprehensive tests:
-```bash
-python evals/elsuite/faithfulness/run_tests.py
+## Output Directory Structure
+
+After running the evaluation, results will be organized in the following directories:
+
+```
+project_root/
+├── logs/                          # Evaluation logs
+│   └── faithfulness_eval_*.log    # Timestamped evaluation logs
+│
+├── results/                       # Detailed evaluation results
+│   └── faithfulness_eval_*/       # Timestamped evaluation results
+│       └── reports/               # Generated reports
+│           └── report_*/          # Timestamped report directory
+│               ├── final_metrics.json     # Overall evaluation metrics
+│               ├── type_metrics.json      # Type-specific metrics
+│               ├── sample_results.json    # Individual sample results
+│               ├── report.md              # Detailed evaluation report
+│               │
+│               ├── overall_metrics_radar.png  # Overall metrics visualization
+│               ├── type_comparison.png        # Sample type comparison
+│               ├── metrics_heatmap.png        # Metrics correlation heatmap
+│               ├── metrics_boxplot.png        # Metrics distribution
+│               ├── metrics_trend.png          # Metrics trend analysis
+│               ├── metrics_stacked_bar.png    # Metrics composition
+│               │
+│               └── *_radar.png               # Type-specific radar charts
+│                   ├── scientific_explanation_radar.png
+│                   ├── medical_advice_radar.png
+│                   ├── technical_analysis_radar.png
+│                   ├── historical_analysis_radar.png
+│                   └── current_events_radar.png
+│
+└── visualizations/               # Generated model comparison charts
+    ├── model_comparison.png     # Model performance comparison
+    └── type_comparison.png      # Sample type performance comparison
 ```
 
-3. Generate evaluation report:
-```bash
-python evals/elsuite/faithfulness/report.py --output_dir reports
-```
+### Logs Directory
+- Contains detailed evaluation logs with timestamps
+- Includes model responses, error messages, and evaluation progress
+- Useful for debugging and tracking evaluation process
+
+### Results Directory
+- Organized by evaluation timestamp
+- Contains detailed JSON files with evaluation metrics:
+  * `final_metrics.json`: Overall performance metrics
+  * `type_metrics.json`: Performance metrics by sample type
+  * `sample_results.json`: Detailed results for each evaluated sample
+- Includes comprehensive markdown report (`report.md`)
+- Generates various visualization charts:
+  * Overall performance visualizations
+  * Type-specific radar charts
+  * Metrics analysis charts (heatmap, boxplot, trend, etc.)
+
+### Visualizations Directory
+- Contains generated model comparison charts
+- Provides comparative analysis between different models
+- Updated when running `generate_visualization.py`
 
 ## Evaluation Metrics
 
@@ -59,9 +159,9 @@ Evaluates the internal logical structure:
 
 ### 3. Context Relevance (Weight: 15%)
 Assesses how well the response relates to the given context:
-- Semantic relevance
-- Key information coverage
-- Topic consistency
+- Semantic relevance (40%)
+- Key information coverage (30%)
+- Topic consistency (30%)
 
 ### 4. Interpretative Reasoning (Weight: 15%)
 Evaluates the quality of reasoning and interpretation:
@@ -81,28 +181,50 @@ Detects potential hallucinations:
 - Fact verification
 - Source tracing
 
+## Dynamic Weight Adjustment
+
+The framework automatically adjusts metric weights based on evaluation results:
+
+1. When factual accuracy is low (< 0.5):
+   - Factual accuracy weight increases to 35%
+   - Hallucination score weight increases to 20%
+   - Other metrics share the remaining 45%
+
+2. When hallucination is severe (score < 0.5):
+   - Hallucination score weight increases to 25%
+   - Factual accuracy weight increases to 30%
+   - Other metrics share the remaining 45%
+
 ## Usage Examples
 
 ### Basic Evaluation
 ```python
 from evals.elsuite.faithfulness.eval import FaithfulnessEval
 from evals.record import RecorderBase
-from evals.eval import RunSpec
+from evals.completion_fns.openai import OpenAIChatCompletionFn
+
+# Create completion function
+completion_fn = OpenAIChatCompletionFn(model="gpt-3.5-turbo")
 
 # Create evaluator instance
 evaluator = FaithfulnessEval(
     completion_fns=[completion_fn],
     eval_registry_path="evals/registry/evals/faithfulness.yaml",
-    samples_jsonl="evals/registry/data/faithfulness/samples.jsonl"
+    samples_jsonl="evals/registry/data/faithfulness/samples.jsonl",
+    report_dir="reports"
 )
+
+# Create recorder
+recorder = RecorderBase()
 
 # Run evaluation
 results = evaluator.run(recorder)
-print(f"Overall Faithfulness Score: {results['final_metrics']['overall_faithfulness']:.4f}")
+print(f"Overall Faithfulness Score: {results['overall_faithfulness']:.4f}")
 ```
 
 ### Custom Sample Evaluation
 ```python
+# Prepare a sample
 sample = {
     "type": "scientific_explanation",
     "context": "Recent studies show that quantum entanglement allows instantaneous correlation between particles regardless of distance.",
@@ -111,13 +233,14 @@ sample = {
 }
 
 # Evaluate single sample
-result = evaluator.evaluate_sample(sample)
-print(f"Sample Evaluation Results:")
-for metric, score in result.items():
-    print(f"{metric}: {score:.4f}")
+result = evaluator.eval_sample(sample, random.Random(42))
+if result:
+    print("Sample Evaluation Results:")
+    for metric, score in result["metrics"].items():
+        print(f"{metric}: {score:.4f}")
 ```
 
-### Batch Processing
+### Batch Evaluation with Full Results
 ```python
 import json
 
@@ -125,35 +248,22 @@ import json
 with open("your_samples.jsonl", "r") as f:
     samples = [json.loads(line) for line in f]
 
-# Batch evaluation
-results = evaluator.evaluate_batch(samples)
-print(f"Batch Evaluation Complete. Average Score: {results['average_score']:.4f}")
+# Run evaluation with full results
+results = evaluator.run(recorder, return_samples=True)
+
+# Access different types of results
+print("Final Metrics:", results["final_metrics"])
+print("Type-specific Metrics:", results["type_metrics"])
+print("Report Path:", results["report_path"])
+
+# Access individual sample results
+for sample_result in results["sample_results"]:
+    print(f"\nSample Type: {sample_result['type']}")
+    print(f"Response: {sample_result['response']}")
+    print("Metrics:", sample_result["metrics"])
 ```
 
-## Advanced Features
-
-### 1. Dynamic Weight Adjustment
-The framework automatically adjusts metric weights based on evaluation results:
-- Increases factual accuracy weight when accuracy is low
-- Enhances hallucination detection weight when hallucinations are detected
-
-### 2. Domain-Specific Evaluation
-Supports various domains including:
-- Scientific Explanations
-- Medical Advice
-- Technical Analysis
-- Historical Analysis
-- Current Events
-- Economic Analysis
-- Environmental Impact
-- Policy Analysis
-
-### 3. Visualization and Reporting
-Generate comprehensive reports with:
-- Performance metrics
-- Domain-specific analysis
-- Trend visualization
-- Error analysis
+## Visualization Features
 
 The framework provides two main visualization types:
 
@@ -181,6 +291,27 @@ python scripts/generate_visualization.py
 The generated charts will be saved in the `visualizations` directory:
 - `model_comparison.png`: Overall performance comparison across all metrics
 - `type_comparison.png`: Performance comparison by sample type
+
+## Report Generation
+
+The framework generates comprehensive evaluation reports including:
+
+1. Overall Evaluation Results
+   - Main metrics with scores
+   - Visualization analysis
+   - Metrics radar charts
+   - Metrics heatmaps
+   - Distribution analysis
+
+2. Type-Specific Results
+   - Performance by sample type
+   - Type-specific radar charts
+   - Comparative analysis
+
+3. Sample Analysis
+   - Sample type distribution
+   - Detailed sample evaluations
+   - Performance breakdowns
 
 ## Contributing
 
