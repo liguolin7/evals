@@ -1,21 +1,51 @@
+# Python
 __pycache__/
-evals.egg-info/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-.venv/
+# Virtual Environment
 venv/
+ENV/
+env/
+.env
 
-# MacOS folder metadata
-.DS_Store
-.vscode/
-
-# PyCharm folder metadata
+# IDE
 .idea/
+.vscode/
+*.swp
+*.swo
 
-build
+# Logs and databases
+*.log
+*.sqlite
+logs/
 
-openai-key.txt
-*.code-workspace
+# Generated files
+visualizations/
+results/
 
-# Ignore run_experiments.sh results
-evals/elsuite/**/logs/
-evals/elsuite/**/outputs/
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

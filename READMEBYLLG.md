@@ -155,6 +155,33 @@ Generate comprehensive reports with:
 - Trend visualization
 - Error analysis
 
+The framework provides two main visualization types:
+
+1. Model Performance Comparison
+   - Compares multiple models (GPT-3.5 Turbo, GPT-4 Turbo, GPT-4) across all evaluation metrics
+   - Metrics include:
+     * Factual Accuracy
+     * Logical Coherence
+     * Context Relevance
+     * Interpretative Reasoning
+     * Information Completeness
+     * Hallucination Score
+     * Overall Faithfulness
+
+2. Sample Type Performance Analysis
+   - Shows model performance across different types of samples
+   - Compares overall faithfulness scores for each sample type
+   - Helps identify model strengths and weaknesses in specific domains
+
+To generate visualization charts:
+```bash
+python scripts/generate_visualization.py
+```
+
+The generated charts will be saved in the `visualizations` directory:
+- `model_comparison.png`: Overall performance comparison across all metrics
+- `type_comparison.png`: Performance comparison by sample type
+
 ## Contributing
 
 We welcome contributions! Please see our contributing guidelines for more details.
