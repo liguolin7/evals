@@ -34,39 +34,50 @@ project_root/
 ├── requirements.txt              # Project dependencies
 ```
 
-## Installation
+## Environment Setup
 
 ### Prerequisites
-
+- Anaconda or Miniconda
 - Python 3.9
-- Conda (recommended for environment management)
-- Git LFS (for downloading evaluation data)
+- Apple Silicon Mac
 
-### Environment Setup
+### Installation Steps
 
-1. Create and activate a new conda environment:
+1. Clone the repository:
 ```bash
-conda create -n evals_new python=3.9
-conda activate evals_new
-```
-
-2. Clone the repository:
-```bash
-git clone https://github.com/liguolin7/evals.git
+git clone <https://github.com/liguolin7/evals.git>
 cd evals
 ```
 
-3. Install dependencies:
+2. Create and activate conda environment:
 ```bash
-pip install -r requirements.txt
-```
+# Create new environment from environment.yml
+conda env create -n test_new -f environment.yml
 
-4. Install spaCy language model:
-```bash
+# Activate the environment
+conda activate test_new
+
+# Install SpaCy language model
 python -m spacy download en_core_web_sm
 ```
 
-5. Set up OpenAI API key:
+3. Install additional dependencies if needed:
+```bash
+# Basic dependencies
+pip install blobfile lz4 openai backoff pyyaml tiktoken
+
+# Machine learning related
+pip install transformers torch
+
+# NLP related
+pip install nltk
+python -c "import nltk; nltk.download('punkt'); nltk.download('averaged_perceptron_tagger'); nltk.download('wordnet')"
+
+# Data processing and visualization
+pip install pandas matplotlib seaborn
+```
+
+4. Set up OpenAI API key:
 ```bash
 export OPENAI_API_KEY="your-api-key-here"
 ```
@@ -75,13 +86,13 @@ export OPENAI_API_KEY="your-api-key-here"
 
 1. Run a basic evaluation:
 ```bash
-python evals/elsuite/faithfulness/run.py --model gpt-3.5-turbo
+python -m evals.elsuite.faithfulness.run --model gpt-3.5-turbo
 ```
 You can replace gpt-3.5-turbo with other model names, such as gpt-4 or gpt-4-turbo.
 
 2. Generate visualization:
 ```bash
-python scripts/generate_visualization.py
+python -m evals.scripts.generate_visualization.py
 ```
 
 ## Output Directory Structure
@@ -102,7 +113,7 @@ project_root/
 │               ├── sample_results.json    # Individual sample results
 │               ├── report.md              # Detailed evaluation report
 │               │
-│               ├── overall_metrics_radar.png  # Overall metrics visualization
+                ── overall_metrics_radar.png  # Overall metrics visualization
 │               ├── type_comparison.png        # Sample type comparison
 │               ├── metrics_heatmap.png        # Metrics correlation heatmap
 │               ├── metrics_boxplot.png        # Metrics distribution
@@ -327,4 +338,5 @@ This project is built upon the OpenAI Evals framework. We thank the OpenAI team 
 
 ## Contact
 
-For questions and feedback, please open an issue in the repository. 
+For questions and feedback, please open an issue in the repository.
+
