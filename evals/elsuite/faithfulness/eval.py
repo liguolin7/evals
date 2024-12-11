@@ -17,7 +17,7 @@ class FaithfulnessEval(Eval):
     This class implements the faithfulness evaluation framework for LLM responses.
     """
     
-    # 定义评估指标
+    # Define evaluation metrics
     METRICS = [
         "factual_accuracy",
         "logical_coherence",
@@ -27,7 +27,7 @@ class FaithfulnessEval(Eval):
         "hallucination_score"
     ]
     
-    # 定义不同类型的评估权重
+    # Define evaluation weights for different types
     TYPE_WEIGHTS = {
         "general": {
             "factual_accuracy": 0.3,
@@ -97,52 +97,52 @@ class FaithfulnessEval(Eval):
             **kwargs
         )
         self.metrics_calculator = FaithfulnessMetrics()
-        self.type_metrics = {}  # 用于存储每种类型的评估结果
+        self.type_metrics = {}  # Store evaluation results for each type
         self.report_generator = FaithfulnessReport(output_dir=report_dir)
         
     def get_type_weights(self, sample_type: str) -> Dict[str, float]:
-        """获取特定类型的评估权重"""
+        """Get evaluation weights for specific type"""
         return self.TYPE_WEIGHTS.get(sample_type, self.TYPE_WEIGHTS["general"])
 
     def eval_sample(self, sample: Dict[str, Any], rng: Any) -> Optional[Dict[str, Any]]:
-        """评估单个样本"""
-        # 获取样本中的关键信息
+        """Evaluate a single sample"""
+        # Get key information from sample
         context = sample.get("context", "")
         query = sample.get("query", "")
         reference = sample.get("reference", "")
-        sample_type = sample.get("type", "general")  # 默认使用general类型
+        sample_type = sample.get("type", "general")  # Default to general type
         
-        # 构建提示词
+        # Build prompt
         prompt = self._build_prompt(sample_type, context, query)
         
-        # 获取模型响应
+        # Get model response
         result = self.completion_fn(prompt=prompt)
         response = result.get_completions()[0]
         
         try:
-            # 基础评估指标
+            # Basic evaluation metrics
             metrics = {
                 "factual_accuracy": self.metrics_calculator.calculate_factual_accuracy(response, reference),
                 "logical_coherence": self.metrics_calculator.calculate_logical_coherence(response),
                 "context_relevance": self.metrics_calculator.calculate_context_relevance(response, context)
             }
             
-            # 高级评估指标
+            # Advanced evaluation metrics
             advanced_metrics = {
                 "interpretative_reasoning": self.metrics_calculator.calculate_interpretative_reasoning(response, context),
                 "information_completeness": self.metrics_calculator.calculate_information_completeness(response, reference),
                 "hallucination_score": self.metrics_calculator.calculate_hallucination_score(response, context)
             }
             
-            # 合并所有指标
+            # Merge all metrics
             metrics.update(advanced_metrics)
             
-            # 使用类型特定的权重计算综合分数
+            # Calculate overall score using type-specific weights
             weights = self.get_type_weights(sample_type)
             overall_score = sum(metrics[metric] * weight for metric, weight in weights.items())
             metrics["overall_faithfulness"] = overall_score
             
-            # 更新类型特定的指标
+            # Update type-specific metrics
             if sample_type not in self.type_metrics:
                 self.type_metrics[sample_type] = []
             self.type_metrics[sample_type].append(metrics)
@@ -160,59 +160,59 @@ class FaithfulnessEval(Eval):
             return None
 
     def _build_prompt(self, sample_type: str, context: str, query: str) -> Union[str, list[dict[str, str]]]:
-        """构建提示词"""
+        """Build prompt for model input"""
         if isinstance(self.completion_fn, OpenAIChatCompletionFn):
-            # 对于聊天模型使用消息格式
+            # Use message format for chat models
             return [
                 {"role": "system", "content": "You are a helpful AI assistant that provides accurate and faithful responses."},
                 {"role": "user", "content": f"Context: {context}\n\nQuestion: {query}"}
             ]
         else:
-            # 对于普通补全模型使用文本格式
+            # Use text format for completion models
             return f"Context: {context}\n\nQuestion: {query}\n\nAnswer:"
 
     def run(self, recorder: RecorderBase, return_samples: bool = False) -> Union[Dict[str, float], Dict[str, Any]]:
-        """运行评估并生成报告"""
-        # 加载样本
+        """Run evaluation and generate report"""
+        # Load samples
         samples = self.get_samples()
         
-        # 评估所有样本
+        # Evaluate all samples
         sample_results = []
-        self.type_metrics = {}  # 重置类型指标
+        self.type_metrics = {}  # Reset type metrics
         
         for i, sample in enumerate(samples):
             sample_type = sample.get("type", "general")
             
-            # 使用样本索引作为sample_id
+            # Use sample index as sample_id
             sample_id = f"sample_{i}"
             with recorder.as_default_recorder(sample_id):
-                # 记录原始样本
+                # Record original sample
                 recorder.record_raw(sample)
                 
-                # 评估样本
+                # Evaluate sample
                 seed = f"{sample_id}:{self.seed}".encode("utf-8")
                 rng = random.Random(seed)
                 result = self.eval_sample(sample, rng)
                 
                 if result is not None:
-                    # 记录样本的评估结果
+                    # Record evaluation results
                     recorder.record_metrics(**result["metrics"])
                     sample_results.append(result)
                     
-                    # 更新类型特定的指标
+                    # Update type-specific metrics
                     if sample_type not in self.type_metrics:
                         self.type_metrics[sample_type] = []
                     self.type_metrics[sample_type].append(result["metrics"])
         
-        # 计算总体指标和类型特定指标
+        # Calculate overall metrics and type-specific metrics
         final_metrics = self._calculate_final_metrics(sample_results)
         type_averages = self._calculate_type_averages()
         
-        # 使用特殊的sample_id记录最终结果
+        # Record final results with special sample_id
         with recorder.as_default_recorder("final_results"):
             recorder.record_metrics(**final_metrics)
         
-        # 生成评估报告
+        # Generate evaluation report
         report_path = self.report_generator.generate_report(
             final_metrics=final_metrics,
             type_metrics=type_averages,
@@ -231,7 +231,7 @@ class FaithfulnessEval(Eval):
             return final_metrics
 
     def _calculate_final_metrics(self, sample_results: List[Dict]) -> Dict[str, float]:
-        """计算最终的评估指标"""
+        """Calculate final evaluation metrics"""
         metric_names = [
             "factual_accuracy",
             "logical_coherence", 
@@ -253,7 +253,7 @@ class FaithfulnessEval(Eval):
         return final_metrics
 
     def _calculate_type_averages(self) -> Dict[str, Dict[str, float]]:
-        """计算每种类型的平均指标"""
+        """Calculate average metrics for each type"""
         type_averages = {}
         
         for sample_type, metrics_list in self.type_metrics.items():

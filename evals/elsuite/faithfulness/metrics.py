@@ -10,17 +10,17 @@ import re
 
 class FaithfulnessMetrics:
     def __init__(self):
-        # 加载预训练模型用于文本嵌入
+        # Load pre-trained model for text embedding
         self.tokenizer = AutoTokenizer.from_pretrained("sentence-transformers/all-MiniLM-L6-v2")
         self.model = AutoModel.from_pretrained("sentence-transformers/all-MiniLM-L6-v2")
         
-        # 初始化NLTK资源
+        # Initialize NLTK resources
         self._initialize_nltk()
     
     def _initialize_nltk(self):
-        """初始化NLTK资源"""
+        """Initialize NLTK resources"""
         try:
-            # 下载必要的NLTK数据
+            # Download necessary NLTK data
             nltk.download('punkt', quiet=True)
             nltk.download('stopwords', quiet=True)
             nltk.download('averaged_perceptron_tagger', quiet=True)
@@ -28,34 +28,34 @@ class FaithfulnessMetrics:
             print(f"Warning: Failed to download NLTK data: {str(e)}")
     
     def _split_sentences(self, text: str) -> List[str]:
-        """分割文本为句子"""
+        """Split text into sentences"""
         try:
             return sent_tokenize(text)
         except Exception:
-            # 如果NLTK分句失败，使用简单的分句方法
+            # If NLTK sentence splitting fails, use simple method
             return [s.strip() for s in re.split(r'[.!?]+', text) if s.strip()]
     
     def _get_stopwords(self) -> set:
-        """获取停用词"""
+        """Get stopwords"""
         try:
             return set(stopwords.words('english'))
         except Exception:
-            # 如果无法获取NLTK停用词，使用基本的停用词集合
+            # If unable to get NLTK stopwords, use basic stopword set
             return {'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 
                    'has', 'he', 'in', 'is', 'it', 'its', 'of', 'on', 'that', 'the', 
                    'to', 'was', 'were', 'will', 'with'}
 
     def get_embeddings(self, text: str) -> np.ndarray:
-        """获取文本的嵌入向量"""
+        """Get text embeddings"""
         inputs = self.tokenizer(text, return_tensors="pt", padding=True, truncation=True)
         outputs = self.model(**inputs)
         embeddings = outputs.last_hidden_state.mean(dim=1).detach().numpy()
         return embeddings
 
     def calculate_factual_accuracy(self, response: str, reference: str) -> float:
-        """计算事实准确性分数
+        """Calculate factual accuracy score
         
-        使用语义相似度来评估响应与参考之间的事实一致性
+        Use semantic similarity to evaluate factual consistency between response and reference
         """
         response_emb = self.get_embeddings(response)
         reference_emb = self.get_embeddings(reference)
@@ -64,9 +64,9 @@ class FaithfulnessMetrics:
         return float(similarity)
 
     def calculate_logical_coherence(self, response: str) -> float:
-        """计算逻辑连贯性分数
+        """Calculate logical coherence score
         
-        评估响应内部的逻辑结构
+        Evaluate the internal logical structure of the response
         """
         sentences = self._split_sentences(response)
         if len(sentences) <= 1:
@@ -84,24 +84,24 @@ class FaithfulnessMetrics:
         return float(np.mean(coherence_scores)) if coherence_scores else 0.0
 
     def calculate_context_relevance(self, response: str, context: str) -> float:
-        """计算上下文相关性分数
+        """Calculate context relevance score
         
-        评估响应与给定上下文的相关程度:
-        1. 语义相关性
-        2. 关键信息覆盖
-        3. 主题一致性
+        Evaluate the relevance of response to given context:
+        1. Semantic relevance
+        2. Key information coverage
+        3. Topic consistency
         """
-        # 语义相关性评分
+        # Semantic relevance score
         response_emb = self.get_embeddings(response)
         context_emb = self.get_embeddings(context)
         semantic_relevance = cosine_similarity(response_emb, context_emb)[0][0]
         
-        # 关键信息覆盖评分
+        # Key information coverage score
         def extract_key_info(text):
-            # 提取命名实体、数字和关键词
+            # Extract named entities, numbers, and keywords
             entities = re.findall(r'[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*', text)
             numbers = re.findall(r'\d+(?:\.\d+)?%?', text)
-            # 提取可能的关键词（大写字母开头的词）
+            # Extract potential keywords (words starting with capital letters)
             keywords = re.findall(r'\b[A-Z][a-zA-Z]*\b', text)
             return set(entities + numbers + keywords)
         
@@ -110,9 +110,9 @@ class FaithfulnessMetrics:
         
         coverage_score = len(context_info.intersection(response_info)) / len(context_info) if context_info else 1.0
         
-        # 主题一致性评分
+        # Topic consistency score
         def get_topic_words(text):
-            # 获取文本中最重要的词（非停用词）
+            # Get most important words (non-stopwords)
             words = text.lower().split()
             stop_words = self._get_stopwords()
             return set(word for word in words if word not in stop_words)
@@ -122,7 +122,7 @@ class FaithfulnessMetrics:
         
         topic_score = len(context_topics.intersection(response_topics)) / len(context_topics) if context_topics else 1.0
         
-        # 综合评分
+        # Final score
         final_score = (
             semantic_relevance * 0.4 +
             coverage_score * 0.3 +
@@ -132,29 +132,29 @@ class FaithfulnessMetrics:
         return float(final_score)
 
     def calculate_interpretative_reasoning(self, response: str, context: str) -> float:
-        """评估解释性推理能力
+        """Evaluate interpretative reasoning ability
         
-        评估模型是否能基于上下文进行合理的推理和解释
+        Assess if the model can make reasonable inferences and explanations based on context
         """
-        # 推理性词汇列表
+        # List of reasoning words
         reasoning_words = ['because', 'therefore', 'thus', 'since', 'as a result', 
                          'consequently', 'hence', 'so', 'due to', 'indicates']
         
-        # 计算推理性词汇的使用情况
+        # Calculate usage of reasoning words
         reasoning_word_count = sum(1 for word in reasoning_words if word.lower() in response.lower())
-        reasoning_word_score = min(reasoning_word_count / 3, 1.0)  # 最多计算3个推理词
+        reasoning_word_score = min(reasoning_word_count / 3, 1.0)  # Count max 3 reasoning words
         
-        # 评估推理过程的完整性
+        # Evaluate completeness of reasoning process
         sentences = self._split_sentences(response)
-        if len(sentences) < 2:  # 至少需要两个句子才能构成推理
+        if len(sentences) < 2:  # Need at least 2 sentences for reasoning
             process_score = 0.0
         else:
-            process_score = min((len(sentences) - 1) / 3, 1.0)  # 最多计算4个句子
+            process_score = min((len(sentences) - 1) / 3, 1.0)  # Count max 4 sentences
         
-        # 检查结论是否基于上下文
+        # Check if conclusion is based on context
         context_based_score = self.calculate_context_relevance(sentences[-1], context)
         
-        # 综合得分
+        # Final score
         final_score = (reasoning_word_score * 0.3 + 
                       process_score * 0.3 + 
                       context_based_score * 0.4)
@@ -162,18 +162,18 @@ class FaithfulnessMetrics:
         return float(final_score)
 
     def calculate_information_completeness(self, response: str, reference: str) -> float:
-        """评估信息完整性
+        """Evaluate information completeness
         
-        检查响应是否包含了参考答案中的所有关键信息点
+        Check if response contains all key information points from reference
         """
-        # 获取停用词
+        # Get stopwords
         stop_words = self._get_stopwords()
         
-        # 提取关键词（去除停用词和标点符号）
+        # Extract keywords (remove stopwords and punctuation)
         def extract_keywords(text: str) -> set:
-            # 移除标点符号
+            # Remove punctuation
             text = re.sub(r'[^\w\s]', '', text.lower())
-            # 分词并去除停用词
+            # Tokenize and remove stopwords
             words = set(word for word in text.split() if word not in stop_words)
             return words
         
@@ -183,33 +183,33 @@ class FaithfulnessMetrics:
         if not reference_keywords:
             return 0.0
         
-        # 计算关键词覆盖率
+        # Calculate keyword coverage
         coverage = len(response_keywords.intersection(reference_keywords)) / len(reference_keywords)
         
-        # 评估信息深度（通过比较句子数量）
+        # Evaluate information depth (by comparing sentence count)
         ref_sent_count = len(self._split_sentences(reference))
         resp_sent_count = len(self._split_sentences(response))
         depth_score = min(resp_sent_count / ref_sent_count, 1.0) if ref_sent_count > 0 else 0.0
         
-        # 综合得分
+        # Final score
         final_score = coverage * 0.7 + depth_score * 0.3
         
         return float(final_score)
 
     def calculate_hallucination_score(self, response: str, context: str) -> float:
-        """评估幻觉程度（返回无幻觉的置信度，越高越好）
+        """Evaluate hallucination level (returns confidence score of no hallucination, higher is better)
         
-        检测响应中是否包含上下文中不存在的信息
+        Detect if response contains information not present in context
         """
         response_sentences = self._split_sentences(response)
         
-        # 计算每个句子与上下文的相关性
+        # Calculate relevance of each sentence to context
         sentence_scores = []
         for sentence in response_sentences:
             if not sentence.strip():
                 continue
             
-            # 计算句子与上下文的相似度
+            # Calculate similarity between sentence and context
             sentence_emb = self.get_embeddings(sentence)
             context_emb = self.get_embeddings(context)
             similarity = cosine_similarity(sentence_emb, context_emb)[0][0]
@@ -218,7 +218,7 @@ class FaithfulnessMetrics:
         if not sentence_scores:
             return 0.0
         
-        # 计算无幻觉置信度
+        # Calculate no-hallucination confidence
         min_similarity = min(sentence_scores)
         avg_similarity = np.mean(sentence_scores)
         final_score = min_similarity * 0.6 + avg_similarity * 0.4
@@ -226,11 +226,11 @@ class FaithfulnessMetrics:
         return float(final_score)
 
     def calculate_overall_faithfulness(self, metrics: Dict[str, float]) -> float:
-        """计算综合忠实度分数
+        """Calculate overall faithfulness score
         
-        根据不同场景类型调整权重
+        Adjust weights based on different scenario types
         """
-        # 基础权重
+        # Base weights
         base_weights = {
             "factual_accuracy": 0.25,
             "logical_coherence": 0.15,
@@ -240,26 +240,26 @@ class FaithfulnessMetrics:
             "hallucination_score": 0.15
         }
         
-        # 根据评分情况动态调整权重
+        # Dynamically adjust weights based on scores
         if metrics.get("factual_accuracy", 0) < 0.5:
-            # 如果事实准确性较低，增加其权重
+            # If factual accuracy is low, increase its weight
             base_weights["factual_accuracy"] = 0.35
             base_weights["hallucination_score"] = 0.20
-            # 相应减少其他权重
+            # Reduce other weights accordingly
             for k in base_weights:
                 if k not in ["factual_accuracy", "hallucination_score"]:
                     base_weights[k] = (1 - 0.55) / 4
         
         elif metrics.get("hallucination_score", 0) < 0.5:
-            # 如果存在严重幻觉，增加幻觉分数的权重
+            # If serious hallucination exists, increase hallucination score weight
             base_weights["hallucination_score"] = 0.25
             base_weights["factual_accuracy"] = 0.30
-            # 相应减少其他权重
+            # Reduce other weights accordingly
             for k in base_weights:
                 if k not in ["hallucination_score", "factual_accuracy"]:
                     base_weights[k] = (1 - 0.55) / 4
         
-        # 计算加权平均分
+        # Calculate weighted average score
         overall_score = sum(
             metrics[metric] * weight 
             for metric, weight in base_weights.items() 

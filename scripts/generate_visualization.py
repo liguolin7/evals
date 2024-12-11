@@ -3,7 +3,10 @@ import json
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-from typing import Dict
+from typing import Dict, List, Tuple
+import glob
+import re
+import argparse
 
 def create_model_comparison_chart(model_results: Dict[str, Dict[str, float]], output_path: str):
     """Create model comparison chart
@@ -126,48 +129,161 @@ def create_type_comparison_chart(gpt35_results: Dict[str, Dict[str, float]],
     # Close figure
     plt.close()
 
-def main():
-    # Set input and output paths
-    gpt35_base = "results/faithfulness_eval_20241209_024454/reports/report_20241209_024534"
-    gpt4_turbo_base = "results/faithfulness_eval_20241209_024611/reports/report_20241209_024906"
-    gpt4_base = "results/faithfulness_eval_20241209_025136/reports/report_20241209_025338"
-    output_dir = "visualizations"
+def parse_log_file(log_path: str) -> Tuple[str, str]:
+    """
+    Parse model information and result path from log file
     
-    # Create output directory
+    Args:
+        log_path: Path to log file
+    
+    Returns:
+        Tuple containing (model_name, result_path)
+    """
+    model_name = None
+    result_path = None
+    
+    with open(log_path, 'r') as f:
+        for line in f:
+            # Get model name
+            if "Starting Faithfulness Evaluation - Model:" in line:
+                model_match = re.search(r"Model: (.*?)$", line.strip())
+                if model_match:
+                    model = model_match.group(1)
+                    if "gpt-4-turbo" in model.lower():
+                        model_name = "GPT-4 Turbo"
+                    elif "gpt-4" in model.lower():
+                        model_name = "GPT-4"
+                    elif "gpt-3.5" in model.lower() or "gpt35" in model.lower():
+                        model_name = "GPT-3.5 Turbo"
+            
+            # Get report path
+            if "Report Path:" in line:
+                path_match = re.search(r"Report Path: (.*?)/report\.md", line.strip())
+                if path_match:
+                    result_path = path_match.group(1)
+                    break
+    
+    return model_name, result_path
+
+def get_model_name_from_id(model_id: str) -> str:
+    """
+    Convert model ID to display name
+    
+    Args:
+        model_id: Model ID (e.g., gpt-3.5-turbo)
+    
+    Returns:
+        Display name (e.g., GPT-3.5 Turbo)
+    """
+    model_id = model_id.lower()
+    if "gpt-4-turbo" in model_id:
+        return "GPT-4 Turbo"
+    elif "gpt-4" in model_id:
+        return "GPT-4"
+    elif "gpt-3.5" in model_id or "gpt35" in model_id:
+        return "GPT-3.5 Turbo"
+    return model_id.upper()
+
+def find_model_results(target_models: List[str] = None) -> List[Tuple[str, str]]:
+    """
+    Find model evaluation results from logs directory
+    
+    Args:
+        target_models: List of target models to find, if None returns all models
+    
+    Returns:
+        List of tuples containing (model_name, result_path)
+    """
+    results = []
+    log_files = glob.glob("logs/faithfulness_eval_*.log")
+    
+    if not log_files:
+        print("Warning: No log files found")
+        return results
+    
+    # Convert target models to standardized names if specified
+    target_model_names = None
+    if target_models:
+        target_model_names = [get_model_name_from_id(m) for m in target_models]
+        
+    for log_file in log_files:
+        model_name, result_path = parse_log_file(log_file)
+        if model_name and result_path:
+            # Only process target models if specified
+            if target_model_names and model_name not in target_model_names:
+                continue
+                
+            # Check if result files exist
+            if (os.path.exists(os.path.join(result_path, "final_metrics.json")) and 
+                os.path.exists(os.path.join(result_path, "type_metrics.json"))):
+                results.append((model_name, result_path))
+            else:
+                print(f"Warning: Result files not found: {result_path}")
+        else:
+            print(f"Warning: Could not parse information from log file: {log_file}")
+    
+    # Check if all target models were found
+    if target_model_names:
+        found_models = {r[0] for r in results}
+        missing_models = set(target_model_names) - found_models
+        if missing_models:
+            print(f"Warning: No evaluation results found for the following models: {', '.join(missing_models)}")
+    
+    return results
+
+def main():
+    # Set up command line arguments
+    parser = argparse.ArgumentParser(description='Generate visualization charts for model evaluation results')
+    parser.add_argument('--models', nargs='+', help='List of models to compare (e.g., gpt-3.5-turbo gpt-4-turbo gpt-4)')
+    args = parser.parse_args()
+    
+    # Find model results
+    model_results_paths = find_model_results(args.models)
+    
+    if len(model_results_paths) < 1:
+        print("No model results found. Please ensure:")
+        print("1. Log files exist in the logs directory")
+        print("2. Corresponding results exist in the results directory")
+        return
+    
+    print(f"Found the following model results:")
+    for model_name, path in model_results_paths:
+        print(f"- {model_name}: {path}")
+    
+    output_dir = "visualizations"
     os.makedirs(output_dir, exist_ok=True)
     
-    # Read final metrics data
-    with open(os.path.join(gpt35_base, "final_metrics.json"), "r") as f:
-        gpt35_final = json.load(f)
-    with open(os.path.join(gpt4_turbo_base, "final_metrics.json"), "r") as f:
-        gpt4_turbo_final = json.load(f)
-    with open(os.path.join(gpt4_base, "final_metrics.json"), "r") as f:
-        gpt4_final = json.load(f)
+    # Read metrics data for all models
+    model_results = {}
+    model_type_results = {}
     
-    # Prepare model comparison data
-    model_results = {
-        "GPT-3.5 Turbo": gpt35_final,
-        "GPT-4 Turbo": gpt4_turbo_final,
-        "GPT-4": gpt4_final
-    }
+    for model_name, result_path in model_results_paths:
+        # Read final_metrics.json
+        with open(os.path.join(result_path, "final_metrics.json"), "r") as f:
+            model_results[model_name] = json.load(f)
+        
+        # Read type_metrics.json
+        with open(os.path.join(result_path, "type_metrics.json"), "r") as f:
+            model_type_results[model_name] = json.load(f)
     
     # Generate model comparison chart
-    model_comparison_path = os.path.join(output_dir, "model_comparison.png")
-    create_model_comparison_chart(model_results, model_comparison_path)
-    print(f"Model comparison chart generated: {model_comparison_path}")
-    
-    # Read type metrics data
-    with open(os.path.join(gpt35_base, "type_metrics.json"), "r") as f:
-        gpt35_types = json.load(f)
-    with open(os.path.join(gpt4_turbo_base, "type_metrics.json"), "r") as f:
-        gpt4_turbo_types = json.load(f)
-    with open(os.path.join(gpt4_base, "type_metrics.json"), "r") as f:
-        gpt4_types = json.load(f)
+    if len(model_results) > 0:
+        model_comparison_path = os.path.join(output_dir, "model_comparison.png")
+        create_model_comparison_chart(model_results, model_comparison_path)
+        print(f"Model comparison chart generated: {model_comparison_path}")
     
     # Generate type comparison chart
-    type_comparison_path = os.path.join(output_dir, "type_comparison.png")
-    create_type_comparison_chart(gpt35_types, gpt4_turbo_types, gpt4_types, type_comparison_path)
-    print(f"Type comparison chart generated: {type_comparison_path}")
+    if len(model_type_results) >= 3:  # Ensure enough models for comparison
+        gpt35_types = model_type_results.get("GPT-3.5 Turbo", {})
+        gpt4_turbo_types = model_type_results.get("GPT-4 Turbo", {})
+        gpt4_types = model_type_results.get("GPT-4", {})
+        
+        if gpt35_types and gpt4_turbo_types and gpt4_types:
+            type_comparison_path = os.path.join(output_dir, "type_comparison.png")
+            create_type_comparison_chart(gpt35_types, gpt4_turbo_types, gpt4_types, type_comparison_path)
+            print(f"Type comparison chart generated: {type_comparison_path}")
+    else:
+        print("Not enough model data to generate type comparison chart (requires 3 models)")
 
 if __name__ == "__main__":
     main() 

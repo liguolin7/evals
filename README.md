@@ -38,8 +38,8 @@ project_root/
 
 ### Prerequisites
 - Anaconda or Miniconda
-- Python 3.9
-- Apple Silicon Mac
+- Python 3.9+
+- PS: I use Apple Silicon Mac (M1) to run this project.
 
 ### Installation Steps
 
@@ -52,10 +52,10 @@ cd evals
 2. Create and activate conda environment:
 ```bash
 # Create new environment from environment.yml
-conda env create -n test_new -f environment.yml
+conda env create -n evals -f environment.yml
 
 # Activate the environment
-conda activate test_new
+conda activate evals
 
 # Install SpaCy language model
 python -m spacy download en_core_web_sm
@@ -92,8 +92,17 @@ You can replace gpt-3.5-turbo with other model names, such as gpt-4 or gpt-4-tur
 
 2. Generate visualization:
 ```bash
-python -m evals.scripts.generate_visualization.py
+# Generate charts for all available models
+python scripts/generate_visualization.py
+
+# Or generate charts for specific models
+python scripts/generate_visualization.py --models gpt-3.5-turbo gpt-4-turbo gpt-4
 ```
+The script will automatically:
+1. Search for evaluation results in the logs directory
+2. Generate model comparison charts in the `visualizations` directory:
+   - `model_comparison.png`: Overall performance comparison
+   - `type_comparison.png`: Sample type comparison (requires exactly 3 models)
 
 ## Output Directory Structure
 
@@ -290,18 +299,14 @@ The framework provides two main visualization types:
      * Overall Faithfulness
 
 2. Sample Type Performance Analysis
-   - Shows model performance across different types of samples
+   - Shows model performance across different types of samples:
+     * Scientific Explanation
+     * Technical Analysis
+     * Medical Advice
+     * Historical Analysis
+     * Current Events
    - Compares overall faithfulness scores for each sample type
    - Helps identify model strengths and weaknesses in specific domains
-
-To generate visualization charts:
-```bash
-python scripts/generate_visualization.py
-```
-
-The generated charts will be saved in the `visualizations` directory:
-- `model_comparison.png`: Overall performance comparison across all metrics
-- `type_comparison.png`: Performance comparison by sample type
 
 ## Report Generation
 

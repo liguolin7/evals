@@ -11,7 +11,7 @@ from evals.base import RunSpec
 from .eval import FaithfulnessEval
 
 def setup_logging():
-    """设置日志配置"""
+    """Configure logging settings"""
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     log_dir = "logs"
     os.makedirs(log_dir, exist_ok=True)
@@ -26,7 +26,7 @@ def setup_logging():
     )
 
 def create_run_spec(model_name: str) -> RunSpec:
-    """创建运行规范"""
+    """Create run specification"""
     return RunSpec(
         completion_fns=[model_name],
         eval_name="faithfulness",
@@ -37,7 +37,7 @@ def create_run_spec(model_name: str) -> RunSpec:
     )
 
 def create_recorder(run_spec: RunSpec) -> RecorderBase:
-    """创建记录器"""
+    """Create evaluation recorder"""
     return RecorderBase(run_spec=run_spec)
 
 def run_evaluation(
@@ -59,10 +59,10 @@ def run_evaluation(
     logger = logging.getLogger(__name__)
     
     try:
-        # 设置评估参数
+        # Set up evaluation parameters
         registry = Registry()
         
-        # 设置输出目录
+        # Set up output directory
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         output_path = os.path.join("results", f"faithfulness_eval_{timestamp}")
         report_dir = os.path.join(output_path, "reports")
@@ -71,14 +71,14 @@ def run_evaluation(
         logger.info(f"Starting Faithfulness Evaluation - Model: {model_name}")
         logger.info(f"Output Directory: {output_path}")
         
-        # 获取模型completion function
+        # Get model completion function
         completion_fn = registry.make_completion_fn(model_name)
         
-        # 创建运行规范和记录器
+        # Create run specification and recorder
         run_spec = create_run_spec(model_name)
         recorder = create_recorder(run_spec)
         
-        # 创建评估器实例
+        # Create evaluator instance
         evaluator = FaithfulnessEval(
             completion_fns=[completion_fn],
             eval_registry_path="evals/registry/evals/faithfulness.yaml",
@@ -86,10 +86,10 @@ def run_evaluation(
             report_dir=report_dir
         )
         
-        # 运行评估
+        # Run evaluation
         results = evaluator.run(recorder, return_samples=True)
         
-        # 输出评估结果
+        # Output evaluation results
         logger.info("\n=== Evaluation Complete ===")
         logger.info(f"Report Path: {results['report_path']}")
         

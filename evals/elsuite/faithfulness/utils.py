@@ -3,7 +3,7 @@ from typing import List, Dict, Any
 import numpy as np
 
 def load_samples(jsonl_path: str) -> List[Dict[str, Any]]:
-    """加载评估样本数据"""
+    """Load evaluation sample data"""
     samples = []
     with open(jsonl_path, 'r') as f:
         for line in f:
@@ -11,7 +11,7 @@ def load_samples(jsonl_path: str) -> List[Dict[str, Any]]:
     return samples
 
 def format_metrics_report(metrics: Dict[str, float]) -> str:
-    """格式化评估指标报告"""
+    """Format evaluation metrics report"""
     report = "Faithfulness Evaluation Report\n"
     report += "=" * 30 + "\n"
     
@@ -21,16 +21,16 @@ def format_metrics_report(metrics: Dict[str, float]) -> str:
     return report
 
 def normalize_score(score: float, min_val: float = 0.0, max_val: float = 1.0) -> float:
-    """归一化评分到指定范围"""
+    """Normalize score to specified range"""
     return np.clip(score, min_val, max_val)
 
 def extract_key_points(text: str) -> List[str]:
-    """从文本中提取关键点"""
+    """Extract key points from text"""
     sentences = text.split('.')
     return [s.strip() for s in sentences if s.strip()]
 
 def compare_key_points(source_points: List[str], target_points: List[str]) -> float:
-    """比较两组关键点的相似度"""
+    """Compare similarity between two sets of key points"""
     if not source_points or not target_points:
         return 0.0
     
