@@ -26,12 +26,9 @@ project_root/
 │           ├── report.py         # Report generation
 │           ├── run.py           # CLI interface
 │           ├── utils.py         # Utility functions
-│           ├── run_tests.py     # Test runner
-│           ├── test_eval.py     # Unit tests
-│           └── test_report.py   # Report tests
 ├── scripts/
 │   └── generate_visualization.py  # Visualization tools
-├── requirements.txt              # Project dependencies
+├── environment.yml             # Project dependencies
 ```
 
 ## Environment Setup
@@ -121,20 +118,17 @@ project_root/
 │               ├── type_metrics.json      # Type-specific metrics
 │               ├── sample_results.json    # Individual sample results
 │               ├── report.md              # Detailed evaluation report
-│               │
-                ── overall_metrics_radar.png  # Overall metrics visualization
+│               ├── overall_metrics_radar.png  # Overall metrics visualization
 │               ├── type_comparison.png        # Sample type comparison
 │               ├── metrics_heatmap.png        # Metrics correlation heatmap
 │               ├── metrics_boxplot.png        # Metrics distribution
 │               ├── metrics_trend.png          # Metrics trend analysis
 │               ├── metrics_stacked_bar.png    # Metrics composition
-│               │
-│               └── *_radar.png               # Type-specific radar charts
-│                   ├── scientific_explanation_radar.png
-│                   ├── medical_advice_radar.png
-│                   ├── technical_analysis_radar.png
-│                   ├── historical_analysis_radar.png
-│                   └── current_events_radar.png
+│               ├── scientific_explanation_radar.png  # Scientific explanation radar chart
+│               ├── medical_advice_radar.png           # Medical advice radar chart
+│               ├── technical_analysis_radar.png       # Technical analysis radar chart
+│               ├── historical_analysis_radar.png      # Historical analysis radar chart
+│               └── current_events_radar.png           # Current events radar chart
 │
 └── visualizations/               # Generated model comparison charts
     ├── model_comparison.png     # Model performance comparison

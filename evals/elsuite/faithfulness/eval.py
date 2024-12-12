@@ -78,6 +78,7 @@ class FaithfulnessEval(Eval):
         samples_jsonl: str,
         seed: int = 20220722,
         report_dir: str = "reports",
+        model_name: str = None,
         **kwargs,
     ):
         """Initialize evaluator
@@ -88,6 +89,7 @@ class FaithfulnessEval(Eval):
             samples_jsonl: Path to the samples JSONL file
             seed: Random seed for reproducibility
             report_dir: Directory to save the evaluation report
+            model_name: Name of the model being evaluated
         """
         super().__init__(
             completion_fns=completion_fns,
@@ -98,7 +100,7 @@ class FaithfulnessEval(Eval):
         )
         self.metrics_calculator = FaithfulnessMetrics()
         self.type_metrics = {}  # Store evaluation results for each type
-        self.report_generator = FaithfulnessReport(output_dir=report_dir)
+        self.report_generator = FaithfulnessReport(output_dir=report_dir, model_name=model_name)
         
     def get_type_weights(self, sample_type: str) -> Dict[str, float]:
         """Get evaluation weights for specific type"""

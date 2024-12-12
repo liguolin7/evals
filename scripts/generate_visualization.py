@@ -8,12 +8,13 @@ import glob
 import re
 import argparse
 
-def create_model_comparison_chart(model_results: Dict[str, Dict[str, float]], output_path: str):
+def create_model_comparison_chart(model_results: Dict[str, Dict[str, float]], output_path: str, model_order: List[str] = None):
     """Create model comparison chart
     
     Args:
         model_results: Dictionary containing evaluation results for different models
         output_path: Output file path
+        model_order: List of model names in desired order
     """
     plt.style.use('default')
     fig, ax = plt.subplots(figsize=(14, 7))
@@ -28,8 +29,14 @@ def create_model_comparison_chart(model_results: Dict[str, Dict[str, float]], ou
     # Set colors
     colors = ['#2ecc71', '#3498db', '#e74c3c']  # Green, Blue, Red
     
+    # If model_order is provided, use it to sort the models
+    if model_order:
+        sorted_models = [(name, model_results[name]) for name in model_order if name in model_results]
+    else:
+        sorted_models = model_results.items()
+    
     # Create bars for each model
-    for i, (model_name, results) in enumerate(model_results.items()):
+    for i, (model_name, results) in enumerate(sorted_models):
         values = [results[metric] for metric in metrics]
         ax.bar(x + i * width, values, width, label=model_name, color=colors[i], alpha=0.8)
     
@@ -64,39 +71,41 @@ def create_model_comparison_chart(model_results: Dict[str, Dict[str, float]], ou
     # Close figure
     plt.close()
 
-def create_type_comparison_chart(gpt35_results: Dict[str, Dict[str, float]], 
-                               gpt4_turbo_results: Dict[str, Dict[str, float]],
-                               gpt4_results: Dict[str, Dict[str, float]], 
-                               output_path: str):
+def create_type_comparison_chart(model_type_results: Dict[str, Dict[str, Dict[str, float]]], 
+                               output_path: str,
+                               model_order: List[str] = None):
     """Create type comparison chart
     
     Args:
-        gpt35_results: Type evaluation results for GPT-3.5
-        gpt4_turbo_results: Type evaluation results for GPT-4 Turbo
-        gpt4_results: Type evaluation results for GPT-4
+        model_type_results: Dictionary containing type results for different models
         output_path: Output file path
+        model_order: List of model names in desired order
     """
     plt.style.use('default')
     fig, ax = plt.subplots(figsize=(15, 8))
     
-    types = list(gpt35_results.keys())
+    # Get all unique types
+    types = set()
+    for model_results in model_type_results.values():
+        types.update(model_results.keys())
+    types = sorted(list(types))
+    
     x = np.arange(len(types))
     width = 0.25  # Reduced width to accommodate three bars
     
     # Set colors
     colors = ['#2ecc71', '#3498db', '#e74c3c']  # Green, Blue, Red
     
-    # Plot GPT-3.5 results
-    gpt35_values = [gpt35_results[t]['overall_faithfulness'] for t in types]
-    ax.bar(x - width, gpt35_values, width, label='GPT-3.5 Turbo', color=colors[0], alpha=0.8)
+    # If model_order is provided, use it to sort the models
+    if model_order:
+        sorted_models = [(name, model_type_results[name]) for name in model_order if name in model_type_results]
+    else:
+        sorted_models = model_type_results.items()
     
-    # Plot GPT-4 Turbo results
-    gpt4_turbo_values = [gpt4_turbo_results[t]['overall_faithfulness'] for t in types]
-    ax.bar(x, gpt4_turbo_values, width, label='GPT-4 Turbo', color=colors[1], alpha=0.8)
-    
-    # Plot GPT-4 results
-    gpt4_values = [gpt4_results[t]['overall_faithfulness'] for t in types]
-    ax.bar(x + width, gpt4_values, width, label='GPT-4', color=colors[2], alpha=0.8)
+    # Plot bars for each model
+    for i, (model_name, results) in enumerate(sorted_models):
+        values = [results[t]['overall_faithfulness'] if t in results else 0 for t in types]
+        ax.bar(x + i * width, values, width, label=model_name, color=colors[i], alpha=0.8)
     
     # Set chart title and labels
     ax.set_title('Model Performance Comparison by Sample Type', fontsize=14, pad=20)
@@ -104,8 +113,8 @@ def create_type_comparison_chart(gpt35_results: Dict[str, Dict[str, float]],
     ax.set_ylabel('Overall Faithfulness Score', fontsize=12)
     
     # Set x-axis labels
-    ax.set_xticks(x)
-    plt.xticks(x, [t.replace('_', ' ').title() for t in types], rotation=45, ha='right')
+    ax.set_xticks(x + width)
+    plt.xticks(x + width, [t.replace('_', ' ').title() for t in types], rotation=45, ha='right')
     
     # Set legend
     ax.legend()
@@ -158,7 +167,7 @@ def parse_log_file(log_path: str) -> Tuple[str, str]:
             
             # Get report path
             if "Report Path:" in line:
-                path_match = re.search(r"Report Path: (.*?)/report\.md", line.strip())
+                path_match = re.search(r"Report Path: (.*?)(?:/report_[^/]+)?(?:/report\.md)?$", line.strip())
                 if path_match:
                     result_path = path_match.group(1)
                     break
@@ -195,32 +204,40 @@ def find_model_results(target_models: List[str] = None) -> List[Tuple[str, str]]
         List of tuples containing (model_name, result_path)
     """
     results = []
-    log_files = glob.glob("logs/faithfulness_eval_*.log")
-    
-    if not log_files:
-        print("Warning: No log files found")
-        return results
     
     # Convert target models to standardized names if specified
     target_model_names = None
     if target_models:
         target_model_names = [get_model_name_from_id(m) for m in target_models]
+    
+    # First, find all evaluation directories
+    eval_dirs = glob.glob("results/faithfulness_eval_*")
+    
+    for eval_dir in eval_dirs:
+        # Find report directories
+        report_dirs = glob.glob(os.path.join(eval_dir, "reports/report_*"))
         
-    for log_file in log_files:
-        model_name, result_path = parse_log_file(log_file)
-        if model_name and result_path:
-            # Only process target models if specified
-            if target_model_names and model_name not in target_model_names:
-                continue
+        for report_dir in report_dirs:
+            # Look for final_metrics files
+            metric_files = glob.glob(os.path.join(report_dir, "final_metrics_*.json"))
+            
+            for metric_file in metric_files:
+                # Extract model name from filename
+                model_id = os.path.basename(metric_file).replace("final_metrics_", "").replace(".json", "")
+                model_name = get_model_name_from_id(model_id)
                 
-            # Check if result files exist
-            if (os.path.exists(os.path.join(result_path, "final_metrics.json")) and 
-                os.path.exists(os.path.join(result_path, "type_metrics.json"))):
-                results.append((model_name, result_path))
-            else:
-                print(f"Warning: Result files not found: {result_path}")
-        else:
-            print(f"Warning: Could not parse information from log file: {log_file}")
+                # Skip if not in target models
+                if target_model_names and model_name not in target_model_names:
+                    continue
+                
+                # Check if type metrics file exists
+                type_metrics_file = os.path.join(report_dir, f"type_metrics_{model_id}.json")
+                if not os.path.exists(type_metrics_file):
+                    print(f"Warning: Type metrics file not found for {model_name}: {type_metrics_file}")
+                    continue
+                
+                results.append((model_name, report_dir))
+                print(f"Found results for {model_name} in {report_dir}")
     
     # Check if all target models were found
     if target_model_names:
@@ -236,6 +253,9 @@ def main():
     parser = argparse.ArgumentParser(description='Generate visualization charts for model evaluation results')
     parser.add_argument('--models', nargs='+', help='List of models to compare (e.g., gpt-3.5-turbo gpt-4-turbo gpt-4)')
     args = parser.parse_args()
+    
+    # Store the original model order from command line
+    model_order = [get_model_name_from_id(m) for m in args.models] if args.models else None
     
     # Find model results
     model_results_paths = find_model_results(args.models)
@@ -258,30 +278,44 @@ def main():
     model_type_results = {}
     
     for model_name, result_path in model_results_paths:
+        # Get model id
+        model_id = model_name.lower().replace(" ", "-")
+        if model_id == "gpt-3.5-turbo":
+            model_id = "gpt-3.5-turbo"
+        elif model_id == "gpt-4-turbo":
+            model_id = "gpt-4-turbo"
+        elif model_id == "gpt-4":
+            model_id = "gpt-4"
+        
         # Read final_metrics.json
-        with open(os.path.join(result_path, "final_metrics.json"), "r") as f:
-            model_results[model_name] = json.load(f)
+        metrics_file = os.path.join(result_path, f"final_metrics_{model_id}.json")
+        try:
+            with open(metrics_file, "r") as f:
+                model_results[model_name] = json.load(f)
+        except Exception as e:
+            print(f"Error reading {metrics_file}: {str(e)}")
+            continue
         
         # Read type_metrics.json
-        with open(os.path.join(result_path, "type_metrics.json"), "r") as f:
-            model_type_results[model_name] = json.load(f)
+        type_metrics_file = os.path.join(result_path, f"type_metrics_{model_id}.json")
+        try:
+            with open(type_metrics_file, "r") as f:
+                model_type_results[model_name] = json.load(f)
+        except Exception as e:
+            print(f"Error reading {type_metrics_file}: {str(e)}")
+            continue
     
     # Generate model comparison chart
     if len(model_results) > 0:
         model_comparison_path = os.path.join(output_dir, "model_comparison.png")
-        create_model_comparison_chart(model_results, model_comparison_path)
+        create_model_comparison_chart(model_results, model_comparison_path, model_order)
         print(f"Model comparison chart generated: {model_comparison_path}")
     
     # Generate type comparison chart
-    if len(model_type_results) >= 3:  # Ensure enough models for comparison
-        gpt35_types = model_type_results.get("GPT-3.5 Turbo", {})
-        gpt4_turbo_types = model_type_results.get("GPT-4 Turbo", {})
-        gpt4_types = model_type_results.get("GPT-4", {})
-        
-        if gpt35_types and gpt4_turbo_types and gpt4_types:
-            type_comparison_path = os.path.join(output_dir, "type_comparison.png")
-            create_type_comparison_chart(gpt35_types, gpt4_turbo_types, gpt4_types, type_comparison_path)
-            print(f"Type comparison chart generated: {type_comparison_path}")
+    if len(model_type_results) >= 3:
+        type_comparison_path = os.path.join(output_dir, "type_comparison.png")
+        create_type_comparison_chart(model_type_results, type_comparison_path, model_order)
+        print(f"Type comparison chart generated: {type_comparison_path}")
     else:
         print("Not enough model data to generate type comparison chart (requires 3 models)")
 

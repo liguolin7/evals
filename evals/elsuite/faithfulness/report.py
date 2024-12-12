@@ -13,13 +13,15 @@ logger = logging.getLogger(__name__)
 class FaithfulnessReport:
     """Faithfulness Evaluation Report Generator"""
     
-    def __init__(self, output_dir: str = "reports"):
+    def __init__(self, output_dir: str = "reports", model_name: str = None):
         """Initialize report generator
         
         Args:
             output_dir: Output directory for reports
+            model_name: Name of the model being evaluated
         """
         self.output_dir = output_dir
+        self.model_name = model_name
         os.makedirs(output_dir, exist_ok=True)
         
     def generate_report(self, 
@@ -38,7 +40,13 @@ class FaithfulnessReport:
         """
         # Generate report timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        report_dir = os.path.join(self.output_dir, f"report_{timestamp}")
+        
+        # Add model name to report directory if provided
+        report_dir_name = f"report_{timestamp}"
+        if self.model_name:
+            report_dir_name = f"report_{timestamp}_{self.model_name}"
+            
+        report_dir = os.path.join(self.output_dir, report_dir_name)
         os.makedirs(report_dir, exist_ok=True)
         
         # Generate report content
@@ -47,12 +55,16 @@ class FaithfulnessReport:
         # Generate visualizations
         self._generate_visualizations(final_metrics, type_metrics, report_dir)
         
-        # Save report
-        report_path = os.path.join(report_dir, "report.md")
+        # Save report with model name suffix
+        report_name = "report.md"
+        if self.model_name:
+            report_name = f"report_{self.model_name}.md"
+        report_path = os.path.join(report_dir, report_name)
+        
         with open(report_path, "w", encoding="utf-8") as f:
             f.write(report_content)
             
-        # Save raw data
+        # Save raw data with model name
         self._save_raw_data(final_metrics, type_metrics, sample_results, report_dir)
         
         return report_path
@@ -62,6 +74,9 @@ class FaithfulnessReport:
                                type_metrics: Dict[str, Dict[str, float]],
                                sample_results: List[Dict[str, Any]]) -> str:
         """Generate report content"""
+        # Define suffix for file names
+        suffix = f"_{self.model_name}" if self.model_name else ""
+        
         content = []
         
         # 1. Report title
@@ -81,19 +96,19 @@ class FaithfulnessReport:
         # Add visualization references
         content.append("\n### 1.2 Visualization Analysis")
         content.append("\n#### 1.2.1 Overall Metrics Radar")
-        content.append("![Overall Metrics Radar](overall_metrics_radar.png)")
+        content.append(f"![Overall Metrics Radar](overall_metrics_radar{suffix}.png)")
         
         content.append("\n#### 1.2.2 Metrics Heatmap")
-        content.append("![Metrics Heatmap](metrics_heatmap.png)")
+        content.append(f"![Metrics Heatmap](metrics_heatmap{suffix}.png)")
         
         content.append("\n#### 1.2.3 Metrics Distribution")
-        content.append("![Metrics Boxplot](metrics_boxplot.png)")
+        content.append(f"![Metrics Boxplot](metrics_boxplot{suffix}.png)")
         
         content.append("\n#### 1.2.4 Metrics Trend")
-        content.append("![Metrics Trend](metrics_trend.png)")
+        content.append(f"![Metrics Trend](metrics_trend{suffix}.png)")
         
         content.append("\n#### 1.2.5 Metrics Composition")
-        content.append("![Metrics Stacked Bar](metrics_stacked_bar.png)")
+        content.append(f"![Metrics Stacked Bar](metrics_stacked_bar{suffix}.png)")
             
         # 3. Type-specific evaluation results
         content.append("\n## 2. Type-Specific Evaluation Results")
@@ -105,7 +120,7 @@ class FaithfulnessReport:
                          "interpretative_reasoning", "information_completeness", "hallucination_score"]:
                 if metric in metrics:
                     content.append(f"| {metric} | {metrics[metric]:.4f} |")
-            content.append(f"\n![{sample_type} Radar]({sample_type}_radar.png)")
+            content.append(f"\n![{sample_type} Radar]({sample_type}_radar{suffix}.png)")
                 
         # 4. Sample analysis
         content.append("\n## 3. Sample Analysis")
@@ -152,37 +167,45 @@ class FaithfulnessReport:
         plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']  # For macOS
         plt.rcParams['axes.unicode_minus'] = False
         
+        # Add model name suffix to file names if provided
+        suffix = f"_{self.model_name}" if self.model_name else ""
+        
         # 1. Overall metrics radar chart
         self._plot_radar_chart(final_metrics, "Overall Evaluation Metrics", 
-                             os.path.join(report_dir, "overall_metrics_radar.png"))
+                             os.path.join(report_dir, f"overall_metrics_radar{suffix}.png"))
         
         # 2. Type comparison bar chart
         self._plot_type_comparison(type_metrics,
-                                 os.path.join(report_dir, "type_comparison.png"))
+                                 os.path.join(report_dir, f"type_comparison{suffix}.png"))
         
         # 3. Radar chart for each type
         for sample_type, metrics in type_metrics.items():
             self._plot_radar_chart(metrics, f"{sample_type} Evaluation Metrics",
-                                 os.path.join(report_dir, f"{sample_type}_radar.png"))
+                                 os.path.join(report_dir, f"{sample_type}_radar{suffix}.png"))
         
         # 4. Heatmap
         self._plot_heatmap(type_metrics,
-                          os.path.join(report_dir, "metrics_heatmap.png"))
+                          os.path.join(report_dir, f"metrics_heatmap{suffix}.png"))
         
         # 5. Box plot
         self._plot_boxplot(type_metrics,
-                          os.path.join(report_dir, "metrics_boxplot.png"))
+                          os.path.join(report_dir, f"metrics_boxplot{suffix}.png"))
         
         # 6. Trend chart
         self._plot_trend(type_metrics,
-                        os.path.join(report_dir, "metrics_trend.png"))
+                        os.path.join(report_dir, f"metrics_trend{suffix}.png"))
         
         # 7. Stacked bar chart
         self._plot_stacked_bar(type_metrics,
-                             os.path.join(report_dir, "metrics_stacked_bar.png"))
+                             os.path.join(report_dir, f"metrics_stacked_bar{suffix}.png"))
     
     def _plot_radar_chart(self, metrics: Dict[str, float], title: str, save_path: str):
         """Generate radar chart"""
+        # Add model name suffix to save path if provided
+        if self.model_name:
+            base, ext = os.path.splitext(save_path)
+            save_path = f"{base}_{self.model_name}{ext}"
+            
         # Prepare data
         categories = list(metrics.keys())
         values = list(metrics.values())
@@ -210,6 +233,11 @@ class FaithfulnessReport:
     
     def _plot_type_comparison(self, type_metrics: Dict[str, Dict[str, float]], save_path: str):
         """Generate type comparison bar chart"""
+        # Add model name suffix to save path if provided
+        if self.model_name:
+            base, ext = os.path.splitext(save_path)
+            save_path = f"{base}_{self.model_name}{ext}"
+            
         # Prepare data
         df = pd.DataFrame(type_metrics).T
         
@@ -234,6 +262,11 @@ class FaithfulnessReport:
     
     def _plot_heatmap(self, type_metrics: Dict[str, Dict[str, float]], save_path: str):
         """Generate heatmap"""
+        # Add model name suffix to save path if provided
+        if self.model_name:
+            base, ext = os.path.splitext(save_path)
+            save_path = f"{base}_{self.model_name}{ext}"
+            
         # Prepare data
         df = pd.DataFrame(type_metrics).T
         
@@ -254,6 +287,11 @@ class FaithfulnessReport:
     
     def _plot_boxplot(self, type_metrics: Dict[str, Dict[str, float]], save_path: str):
         """Generate box plot"""
+        # Add model name suffix to save path if provided
+        if self.model_name:
+            base, ext = os.path.splitext(save_path)
+            save_path = f"{base}_{self.model_name}{ext}"
+            
         # Prepare data
         df = pd.DataFrame(type_metrics).T
         
@@ -275,6 +313,11 @@ class FaithfulnessReport:
     
     def _plot_trend(self, type_metrics: Dict[str, Dict[str, float]], save_path: str):
         """Generate trend chart"""
+        # Add model name suffix to save path if provided
+        if self.model_name:
+            base, ext = os.path.splitext(save_path)
+            save_path = f"{base}_{self.model_name}{ext}"
+            
         # Prepare data
         df = pd.DataFrame(type_metrics).T
         
@@ -299,6 +342,11 @@ class FaithfulnessReport:
     
     def _plot_stacked_bar(self, type_metrics: Dict[str, Dict[str, float]], save_path: str):
         """Generate stacked bar chart"""
+        # Add model name suffix to save path if provided
+        if self.model_name:
+            base, ext = os.path.splitext(save_path)
+            save_path = f"{base}_{self.model_name}{ext}"
+            
         # Prepare data
         df = pd.DataFrame(type_metrics).T
         
@@ -326,12 +374,22 @@ class FaithfulnessReport:
                       sample_results: List[Dict[str, Any]],
                       report_dir: str):
         """Save raw data for future analysis"""
-        data = {
-            "final_metrics": final_metrics,
-            "type_metrics": type_metrics,
-            "sample_results": sample_results
-        }
-        
-        raw_data_path = os.path.join(report_dir, "raw_data.json")
-        with open(raw_data_path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False) 
+        # Add model name suffix to all file names
+        suffix = ""
+        if self.model_name:
+            suffix = f"_{self.model_name}"
+            
+        # Save final metrics
+        final_metrics_path = os.path.join(report_dir, f"final_metrics{suffix}.json")
+        with open(final_metrics_path, "w", encoding="utf-8") as f:
+            json.dump(final_metrics, f, indent=2, ensure_ascii=False)
+            
+        # Save type metrics
+        type_metrics_path = os.path.join(report_dir, f"type_metrics{suffix}.json")
+        with open(type_metrics_path, "w", encoding="utf-8") as f:
+            json.dump(type_metrics, f, indent=2, ensure_ascii=False)
+            
+        # Save sample results
+        sample_results_path = os.path.join(report_dir, f"sample_results{suffix}.json")
+        with open(sample_results_path, "w", encoding="utf-8") as f:
+            json.dump(sample_results, f, indent=2, ensure_ascii=False) 

@@ -10,18 +10,22 @@ from evals.record import RecorderBase
 from evals.base import RunSpec
 from .eval import FaithfulnessEval
 
-def setup_logging():
+def setup_logging(model_name: str = None):
     """Configure logging settings"""
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     log_dir = "logs"
     os.makedirs(log_dir, exist_ok=True)
+    
+    # Add model name suffix if provided
+    suffix = f"_{model_name}" if model_name else ""
+    log_filename = f'faithfulness_eval_{timestamp}{suffix}.log'
     
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s',
         handlers=[
             logging.StreamHandler(sys.stdout),
-            logging.FileHandler(os.path.join(log_dir, f'faithfulness_eval_{timestamp}.log'))
+            logging.FileHandler(os.path.join(log_dir, log_filename))
         ]
     )
 
@@ -55,7 +59,7 @@ def run_evaluation(
     Returns:
         str: Path to the generated report
     """
-    setup_logging()
+    setup_logging(model_name)
     logger = logging.getLogger(__name__)
     
     try:
@@ -83,7 +87,8 @@ def run_evaluation(
             completion_fns=[completion_fn],
             eval_registry_path="evals/registry/evals/faithfulness.yaml",
             samples_jsonl="evals/registry/data/faithfulness/samples.jsonl",
-            report_dir=report_dir
+            report_dir=report_dir,
+            model_name=model_name
         )
         
         # Run evaluation
