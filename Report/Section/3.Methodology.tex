@@ -1,0 +1,252 @@
+\section{Methodology}
+
+\subsection{Faithfulness Evaluation Framework Overview}
+The faithfulness evaluation framework is designed to provide a comprehensive assessment of LLM outputs through multiple dimensions. At its core, the framework employs advanced natural language processing techniques, including pre-trained language models for semantic analysis and sophisticated metrics for various aspects of output evaluation.
+
+\subsubsection{Framework Definition}
+The framework focuses on evaluating the faithfulness of LLM outputs by:
+\begin{itemize}
+    \item Assessing multiple dimensions of response quality
+    \item Employing sophisticated NLP techniques
+    \item Utilizing pre-trained language models
+    \item Implementing dynamic weight adjustment
+\end{itemize}
+
+\subsubsection{Evaluation Process}
+The evaluation workflow consists of four main stages:
+\begin{enumerate}
+    \item Input processing and tokenization using specialized NLP tools
+    \item Multi-dimensional metric calculation for each response
+    \item Dynamic weight adjustment based on initial results
+    \item Generation of comprehensive evaluation reports and visualizations
+\end{enumerate}
+
+\subsection{Evaluation Metrics}
+Our framework implements six core metrics, each designed to capture different aspects of output faithfulness:
+
+\subsubsection{Factual Accuracy}
+Evaluates the accuracy of response content against reference material:
+\begin{itemize}
+    \item \textbf{Semantic Similarity}: Using sentence-transformers for embedding-based comparison
+    \item \textbf{Key Fact Matching}: Identifying and verifying critical factual elements
+    \item \textbf{Numerical Accuracy}: Specific verification of numerical values and statistics
+\end{itemize}
+
+\subsubsection{Logical Coherence}
+Assesses the internal logical structure and flow:
+\begin{itemize}
+    \item \textbf{Inter-sentence Coherence}: Analyzing semantic relationships between sentences
+    \item \textbf{Argumentation Structure}: Evaluating logical flow and reasoning patterns
+    \item \textbf{Logical Connector Usage}: Examining transition words and phrases
+\end{itemize}
+
+\subsubsection{Context Relevance}
+Measures alignment with provided context:
+\begin{itemize}
+    \item \textbf{Semantic Relevance}: Computing contextual similarity scores
+    \item \textbf{Key Information Coverage}: Assessing critical context elements
+    \item \textbf{Topic Consistency}: Evaluating topic adherence
+\end{itemize}
+
+\subsubsection{Interpretative Reasoning}
+Analyzes reasoning quality and interpretation:
+\begin{itemize}
+    \item \textbf{Reasoning Patterns}: Detecting and evaluating reasoning structures
+    \item \textbf{Process Completeness}: Assessing reasoning chain completeness
+    \item \textbf{Context-based Conclusions}: Validating contextual inferences
+\end{itemize}
+
+\subsubsection{Information Completeness}
+Evaluates response comprehensiveness:
+\begin{itemize}
+    \item \textbf{Keyword Coverage}: Analyzing essential keyword presence
+    \item \textbf{Information Depth}: Measuring content depth
+    \item \textbf{Response Comprehensiveness}: Assessing overall completeness
+\end{itemize}
+
+\subsubsection{Hallucination Score}
+Identifies and quantifies potential hallucinations:
+\begin{itemize}
+    \item \textbf{Context Alignment}: Measuring contextual consistency
+    \item \textbf{Fact Verification}: Identifying unsupported claims
+    \item \textbf{Source Tracing}: Validating information sources
+\end{itemize}
+
+\subsection{Dynamic Weight Adjustment}
+The framework implements an adaptive weight adjustment mechanism that modifies metric weights based on evaluation scenarios and response characteristics.
+
+\subsubsection{Weight Adjustment Mechanism}
+The base weight distribution is as follows:
+\begin{itemize}
+    \item Factual Accuracy: 25\%
+    \item Logical Coherence: 15\%
+    \item Context Relevance: 15\%
+    \item Interpretative Reasoning: 15\%
+    \item Information Completeness: 15\%
+    \item Hallucination Score: 15\%
+\end{itemize}
+
+\subsubsection{Adjustment Rules}
+Weights are dynamically adjusted based on specific triggers:
+
+\begin{itemize}
+    \item \textbf{Low Factual Accuracy Scenario} (accuracy < 0.5):
+    \begin{itemize}
+        \item Factual Accuracy weight: 35\%
+        \item Hallucination Score weight: 20\%
+        \item Other metrics: 45\% (equally distributed)
+    \end{itemize}
+    
+    \item \textbf{High Hallucination Scenario} (hallucination score < 0.5):
+    \begin{itemize}
+        \item Hallucination Score weight: 25\%
+        \item Factual Accuracy weight: 30\%
+        \item Other metrics: 45\% (equally distributed)
+    \end{itemize}
+\end{itemize}
+
+This dynamic adjustment ensures that the evaluation framework adapts to specific challenges in different response scenarios, providing more accurate and relevant assessments of LLM output faithfulness.
+
+\subsection{Implementation Details}
+The framework implementation consists of three core components:
+
+\subsubsection{Evaluation Core (eval.py)}
+The \texttt{FaithfulnessEval} class implements the core evaluation process:
+\begin{itemize}
+    \item \textbf{Core Evaluation Process}:
+    \begin{itemize}
+        \item Sample loading and preprocessing
+        \item Model response acquisition
+        \item Metric calculation and scoring
+        \item Overall faithfulness assessment
+    \end{itemize}
+    \item \textbf{Key Features}:
+    \begin{itemize}
+        \item Robust error handling
+        \item Configurable evaluation parameters
+        \item Progress tracking and logging
+        \item Result aggregation
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Metrics Implementation (metrics.py)}
+The \texttt{FaithfulnessMetrics} class provides:
+\begin{itemize}
+    \item \textbf{Metric Calculations}:
+    \begin{itemize}
+        \item Implementation of all six core metrics
+        \item Pre-trained model integration for semantic analysis
+        \item NLTK resource initialization
+        \item Text processing utilities
+    \end{itemize}
+    \item \textbf{Features}:
+    \begin{itemize}
+        \item Configurable metric parameters
+        \item Caching for efficiency
+        \item Extensible metric framework
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Report Generation (report.py)}
+The \texttt{FaithfulnessReport} class handles:
+\begin{itemize}
+    \item \textbf{Report Generation}:
+    \begin{itemize}
+        \item Comprehensive evaluation reports
+        \item Visualization integration
+        \item Raw data export
+    \end{itemize}
+    \item \textbf{Visualization Types}:
+    \begin{itemize}
+        \item Performance radar charts
+        \item Correlation heatmaps
+        \item Score distributions
+        \item Trend analysis plots
+    \end{itemize}
+\end{itemize}
+
+\subsection{Sample Type-Specific Weights}
+Different types of evaluation samples have specific metric weight distributions:
+
+\begin{table}[h]
+\centering
+\caption{Metric Weights by Sample Type}
+\label{tab:metric_weights}
+\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+\textbf{Type} & \textbf{FA} & \textbf{LC} & \textbf{CR} & \textbf{IR} & \textbf{IC} & \textbf{HS} \\
+\hline
+General & 0.30 & 0.20 & 0.15 & 0.15 & 0.10 & 0.10 \\
+Medical & 0.35 & 0.15 & 0.15 & 0.15 & 0.10 & 0.10 \\
+Scientific & 0.35 & 0.20 & 0.10 & 0.15 & 0.10 & 0.10 \\
+Historical & 0.30 & 0.20 & 0.15 & 0.15 & 0.10 & 0.10 \\
+Legal & 0.30 & 0.25 & 0.15 & 0.15 & 0.10 & 0.05 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Technical Implementation}
+The framework utilizes advanced NLP techniques and models:
+
+\subsubsection{Text Embedding}
+Sentence-Transformers model is used for text embedding:
+\begin{verbatim}
+def get_embeddings(self, text: str) -> np.ndarray:
+    inputs = self.tokenizer(
+        text, 
+        return_tensors="pt", 
+        padding=True, 
+        truncation=True
+    )
+    outputs = self.model(**inputs)
+    embeddings = outputs.last_hidden_state.mean(dim=1)
+    return embeddings.detach().numpy()
+\end{verbatim}
+
+\subsubsection{Evaluation Process Flow}
+The evaluation process follows a systematic workflow:
+\begin{enumerate}
+    \item \textbf{Model Initialization}:
+    \begin{itemize}
+        \item Configuration of API parameters and rate limits
+        \item Environment setup and dependency verification
+        \item Loading and validation of evaluation samples
+        \item Initialization of metric calculation components
+    \end{itemize}
+
+    \item \textbf{Evaluation Execution}:
+    \begin{itemize}
+        \item Sequential processing of evaluation samples
+        \item Real-time calculation of faithfulness metrics
+        \item Dynamic adjustment of metric weights
+        \item Continuous monitoring of evaluation progress
+    \end{itemize}
+
+    \item \textbf{Results Collection}:
+    \begin{itemize}
+        \item Aggregation of individual sample results
+        \item Computation of type-specific performance metrics
+        \item Generation of overall evaluation metrics
+        \item Validation of collected results
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Logging and Results Storage}
+The framework implements comprehensive logging and storage:
+\begin{itemize}
+    \item \textbf{Logging System}:
+    \begin{itemize}
+        \item Detailed timestamp-based execution logs
+        \item Real-time progress tracking
+        \item Error handling and reporting
+        \item Performance monitoring
+    \end{itemize}
+
+    \item \textbf{Results Storage}:
+    \begin{itemize}
+        \item Structured JSON format
+        \item Version control for reproducibility
+        \item Automated backup mechanisms
+        \item Data integrity validation
+    \end{itemize}
+\end{itemize}

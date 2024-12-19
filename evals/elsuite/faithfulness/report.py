@@ -201,11 +201,6 @@ class FaithfulnessReport:
     
     def _plot_radar_chart(self, metrics: Dict[str, float], title: str, save_path: str):
         """Generate radar chart"""
-        # Add model name suffix to save path if provided
-        if self.model_name:
-            base, ext = os.path.splitext(save_path)
-            save_path = f"{base}_{self.model_name}{ext}"
-            
         # Prepare data
         categories = list(metrics.keys())
         values = list(metrics.values())
@@ -233,11 +228,6 @@ class FaithfulnessReport:
     
     def _plot_type_comparison(self, type_metrics: Dict[str, Dict[str, float]], save_path: str):
         """Generate type comparison bar chart"""
-        # Add model name suffix to save path if provided
-        if self.model_name:
-            base, ext = os.path.splitext(save_path)
-            save_path = f"{base}_{self.model_name}{ext}"
-            
         # Prepare data
         df = pd.DataFrame(type_metrics).T
         
@@ -262,11 +252,6 @@ class FaithfulnessReport:
     
     def _plot_heatmap(self, type_metrics: Dict[str, Dict[str, float]], save_path: str):
         """Generate heatmap"""
-        # Add model name suffix to save path if provided
-        if self.model_name:
-            base, ext = os.path.splitext(save_path)
-            save_path = f"{base}_{self.model_name}{ext}"
-            
         # Prepare data
         df = pd.DataFrame(type_metrics).T
         
@@ -287,11 +272,6 @@ class FaithfulnessReport:
     
     def _plot_boxplot(self, type_metrics: Dict[str, Dict[str, float]], save_path: str):
         """Generate box plot"""
-        # Add model name suffix to save path if provided
-        if self.model_name:
-            base, ext = os.path.splitext(save_path)
-            save_path = f"{base}_{self.model_name}{ext}"
-            
         # Prepare data
         df = pd.DataFrame(type_metrics).T
         
@@ -313,11 +293,6 @@ class FaithfulnessReport:
     
     def _plot_trend(self, type_metrics: Dict[str, Dict[str, float]], save_path: str):
         """Generate trend chart"""
-        # Add model name suffix to save path if provided
-        if self.model_name:
-            base, ext = os.path.splitext(save_path)
-            save_path = f"{base}_{self.model_name}{ext}"
-            
         # Prepare data
         df = pd.DataFrame(type_metrics).T
         
@@ -342,11 +317,6 @@ class FaithfulnessReport:
     
     def _plot_stacked_bar(self, type_metrics: Dict[str, Dict[str, float]], save_path: str):
         """Generate stacked bar chart"""
-        # Add model name suffix to save path if provided
-        if self.model_name:
-            base, ext = os.path.splitext(save_path)
-            save_path = f"{base}_{self.model_name}{ext}"
-            
         # Prepare data
         df = pd.DataFrame(type_metrics).T
         

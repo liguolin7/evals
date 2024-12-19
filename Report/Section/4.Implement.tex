@@ -1,0 +1,299 @@
+\section{Implementation}
+
+\subsection{Project Structure}
+The project follows a well-organized modular architecture:
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,breaklines=true,columns=flexible]
+project_root/
+|-- evals/
+|   `-- elsuite/
+|       `-- faithfulness/
+|           |-- __init__.py
+|           |-- eval.py           # Core evaluation implementation
+|           |-- metrics.py        # Metric calculation functions
+|           |-- report.py         # Report generation
+|           |-- run.py           # Command line interface
+|           `-- utils.py         # Utility functions
+|-- scripts/
+|   `-- generate_visualization.py  # Visualization tools
+|-- logs/                         # Evaluation logs
+|   `-- faithfulness_eval_*.log   # Timestamped evaluation logs
+|-- results/                      # Detailed evaluation results
+|   `-- faithfulness_eval_*/      # Timestamped evaluation results
+|       `-- reports/              # Generated reports
+|           `-- report_*/         # Timestamped report directory
+|               |-- final_metrics_{model_name}.json    
+|               |-- type_metrics_{model_name}.json     
+|               |-- sample_results_{model_name}.json   
+|               `-- visualizations/                    
+|-- visualizations/              # Model comparison charts
+|   |-- model_comparison.png    # Model performance comparison
+|   `-- type_comparison.png     # Sample type performance comparison
+`-- environment.yml             # Project dependencies
+\end{lstlisting}
+
+\subsection{Core Components Analysis}
+
+\subsubsection{Evaluation Core (eval.py)}
+The \texttt{FaithfulnessEval} class implements the core evaluation process:
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,breaklines=true,columns=flexible]
+class FaithfulnessEval(Eval):
+    # Define evaluation metrics
+    METRICS = [
+        "factual_accuracy",
+        "logical_coherence",
+        "context_relevance",
+        "interpretative_reasoning",
+        "information_completeness",
+        "hallucination_score"
+    ]
+    
+    # Define evaluation weights for different types
+    TYPE_WEIGHTS = {
+        "general": {
+            "factual_accuracy": 0.3,
+            "logical_coherence": 0.2,
+            "context_relevance": 0.15,
+            "interpretative_reasoning": 0.15,
+            "information_completeness": 0.1,
+            "hallucination_score": 0.1
+        }
+        # Other type weights...
+    }
+    
+    def eval_sample(self, sample: Dict[str, Any]) -> Dict[str, Any]:
+        # Get key information from sample
+        context = sample.get("context", "")
+        query = sample.get("query", "")
+        reference = sample.get("reference", "")
+        sample_type = sample.get("type", "general")
+        
+        # Calculate metrics
+        metrics = {
+            "factual_accuracy": self.metrics.calculate_factual_accuracy(
+                response, reference),
+            "logical_coherence": self.metrics.calculate_logical_coherence(
+                response),
+            "context_relevance": self.metrics.calculate_context_relevance(
+                response, context),
+            # ... other metrics
+        }
+        
+        return {
+            "sample": sample,
+            "response": response,
+            "metrics": metrics,
+            "type": sample_type
+        }
+\end{lstlisting}
+
+Key features include:
+\begin{itemize}
+    \item Sample loading and preprocessing
+    \item Model response acquisition
+    \item Metric calculation and scoring
+    \item Dynamic weight adjustment
+    \item Result aggregation and reporting
+\end{itemize}
+
+\subsubsection{Metrics Implementation (metrics.py)}
+The \texttt{FaithfulnessMetrics} class provides metric calculations:
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,breaklines=true,columns=flexible]
+class FaithfulnessMetrics:
+    def calculate_context_relevance(self, response: str, context: str) -> float:
+        # Calculate semantic relevance
+        semantic_relevance = self.calculate_semantic_similarity(
+            response, context)
+        
+        # Calculate information coverage
+        coverage_score = self.calculate_coverage(response, context)
+        
+        # Calculate topic consistency
+        topic_score = self.calculate_topic_consistency(response, context)
+        
+        # Final weighted score
+        final_score = (
+            semantic_relevance * 0.4 +
+            coverage_score * 0.3 +
+            topic_score * 0.3
+        )
+        
+        return float(final_score)
+        
+    def calculate_overall_faithfulness(self, metrics: Dict[str, float]) -> float:
+        # Base weights
+        base_weights = {
+            "factual_accuracy": 0.25,
+            "logical_coherence": 0.15,
+            "context_relevance": 0.15,
+            "interpretative_reasoning": 0.15,
+            "information_completeness": 0.15,
+            "hallucination_score": 0.15
+        }
+        
+        # Dynamic weight adjustment
+        if metrics.get("factual_accuracy", 0) < 0.5:
+            base_weights["factual_accuracy"] = 0.35
+            base_weights["hallucination_score"] = 0.20
+            # Adjust other weights...
+        
+        return float(sum(metrics[m] * w for m, w in base_weights.items()))
+\end{lstlisting}
+
+\subsubsection{Report Generation (report.py)}
+The \texttt{FaithfulnessReport} class handles report generation:
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,breaklines=true,columns=flexible]
+class FaithfulnessReport:
+    def generate_report(self, final_metrics, type_metrics, sample_results):
+        # Generate visualizations
+        self._generate_radar_charts()
+        self._generate_heatmaps()
+        self._generate_boxplots()
+        self._generate_trend_plots()
+        
+        # Generate report content
+        content = []
+        content.append("# Evaluation Report\n")
+        
+        # Add overall metrics
+        content.append("## 1. Overall Metrics")
+        for metric, score in final_metrics.items():
+            content.append(f"- {metric}: {score:.4f}")
+        
+        # Add type-specific results
+        content.append("\n## 2. Type-Specific Results")
+        for type_name, metrics in type_metrics.items():
+            content.append(f"\n### {type_name}")
+            for metric, score in metrics.items():
+                content.append(f"- {metric}: {score:.4f}")
+        
+        return "\n".join(content)
+\end{lstlisting}
+
+\subsection{Environment Setup}
+
+\subsubsection{Required Tools and Dependencies}
+Essential components:
+\begin{itemize}
+    \item Python 3.9 or higher
+    \item Anaconda/Miniconda for environment management
+    \item OpenAI API access credentials
+    \item Required Python packages:
+    \begin{itemize}
+        \item transformers
+        \item torch
+        \item nltk
+        \item openai
+        \item numpy
+        \item pandas
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Installation Process}
+Setup steps:
+\begin{enumerate}
+    \item \textbf{Environment Creation}:
+    \begin{lstlisting}[basicstyle=\ttfamily\small]
+    conda env create -n evals -f environment.yml
+    conda activate evals
+    \end{lstlisting}
+
+    \item \textbf{Package Installation}:
+    \begin{lstlisting}[basicstyle=\ttfamily\small]
+    pip install -r requirements.txt
+    \end{lstlisting}
+
+    \item \textbf{NLTK Resources}:
+    \begin{lstlisting}[basicstyle=\ttfamily\small]
+    python -m nltk.downloader punkt wordnet
+    \end{lstlisting}
+
+    \item \textbf{API Configuration}:
+    \begin{lstlisting}[basicstyle=\ttfamily\small]
+    export OPENAI_API_KEY="your-api-key"
+    \end{lstlisting}
+\end{enumerate}
+
+\subsection{Samples and Configuration}
+
+\subsubsection{Evaluation Samples}
+Sample types in \texttt{samples.jsonl}:
+\begin{itemize}
+    \item \textbf{Scientific Explanations}:
+    \begin{itemize}
+        \item Complex scientific concepts
+        \item Technical processes
+        \item Research findings
+    \end{itemize}
+    \item \textbf{Technical Analyses}:
+    \begin{itemize}
+        \item System architectures
+        \item Algorithm explanations
+        \item Performance evaluations
+    \end{itemize}
+    \item \textbf{Medical Advice}:
+    \begin{itemize}
+        \item Health recommendations
+        \item Treatment explanations
+        \item Medical procedures
+    \end{itemize}
+    \item \textbf{Historical Analyses}:
+    \begin{itemize}
+        \item Historical events
+        \item Cultural developments
+        \item Societal changes
+    \end{itemize}
+    \item \textbf{Current Events}:
+    \begin{itemize}
+        \item Recent developments
+        \item Ongoing situations
+        \item Contemporary issues
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Framework Configuration}
+Settings in \texttt{faithfulness.yaml}:
+\begin{itemize}
+    \item \textbf{Evaluation Parameters}:
+    \begin{itemize}
+        \item Metric weights and thresholds
+        \item Model configuration settings
+        \item Evaluation criteria
+    \end{itemize}
+    \item \textbf{Report Settings}:
+    \begin{itemize}
+        \item Output format preferences
+        \item Visualization options
+        \item Data export configurations
+    \end{itemize}
+\end{itemize}
+
+\subsection{Usage Example}
+Basic evaluation workflow:
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,breaklines=true,columns=flexible]
+from evals.elsuite.faithfulness.eval import FaithfulnessEval
+from evals.record import RecorderBase
+from evals.completion_fns.openai import OpenAIChatCompletionFn
+
+# Create completion function
+completion_fn = OpenAIChatCompletionFn(model="gpt-3.5-turbo")
+
+# Create evaluator instance
+evaluator = FaithfulnessEval(
+    completion_fns=[completion_fn],
+    eval_registry_path="evals/registry/evals/faithfulness.yaml",
+    samples_jsonl="evals/registry/data/faithfulness/samples.jsonl",
+    report_dir="reports"
+)
+
+# Create recorder
+recorder = RecorderBase()
+
+# Run evaluation
+results = evaluator.run(recorder)
+print(f"Overall Faithfulness Score: {results['overall_faithfulness']:.4f}")
+\end{lstlisting}
