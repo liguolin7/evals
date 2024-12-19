@@ -1,0 +1,47 @@
+{
+  "scientific_explanation": {
+    "factual_accuracy": 0.830583244562149,
+    "logical_coherence": 0.5723226368427277,
+    "context_relevance": 0.542865839380967,
+    "interpretative_reasoning": 0.5136605284339503,
+    "information_completeness": 0.7857692307692308,
+    "hallucination_score": 0.4918875992298126,
+    "overall_faithfulness": 0.6498841389093323
+  },
+  "technical_analysis": {
+    "factual_accuracy": 0.8034690916538239,
+    "logical_coherence": 0.1929820030927658,
+    "context_relevance": 0.6074303439685276,
+    "interpretative_reasoning": 0.5385892186846051,
+    "information_completeness": 0.6641891891891891,
+    "hallucination_score": 0.19378049969673158,
+    "overall_faithfulness": 0.5373370314012622
+  },
+  "medical_advice": {
+    "factual_accuracy": 0.9213451445102692,
+    "logical_coherence": 0.5799524188041687,
+    "context_relevance": 0.6452640748825393,
+    "interpretative_reasoning": 0.4022788375565986,
+    "information_completeness": 0.7551724137931034,
+    "hallucination_score": 0.549608689546585,
+    "overall_faithfulness": 0.6800035743137539
+  },
+  "current_events": {
+    "factual_accuracy": 0.8006499409675598,
+    "logical_coherence": 0.5237821638584137,
+    "context_relevance": 0.43014982257570544,
+    "interpretative_reasoning": 0.5421694162913732,
+    "information_completeness": 0.664,
+    "hallucination_score": 0.5134586781263352,
+    "overall_faithfulness": 0.6085451687046459
+  },
+  "historical_analysis": {
+    "factual_accuracy": 0.8220618367195129,
+    "logical_coherence": 0.1736212782561779,
+    "context_relevance": 0.704198392232259,
+    "interpretative_reasoning": 0.5874358876546224,
+    "information_completeness": 0.7854489164086687,
+    "hallucination_score": 0.11222011819481849,
+    "overall_faithfulness": 0.5648548521104704
+  }
+}

@@ -37,10 +37,6 @@ env/
 *.sqlite
 logs/
 
-# Generated files
-visualizations/
-results/
-
 # OS
 .DS_Store
 .DS_Store?
@@ -50,11 +46,7 @@ results/
 ehthumbs.db
 Thumbs.db
 
-# 忽略Report文件夹及其所有内容
-Report/
-Report/*
-
-# 常见的LaTeX生成文件
+# LaTeX生成文件
 *.aux
 *.log
 *.out
@@ -67,9 +59,3 @@ Report/*
 *.bbl
 *.blg
 *.dvi
-*.pdf
-
-# macOS系统文件
-.DS_Store
-.AppleDouble
-.LSOverride
