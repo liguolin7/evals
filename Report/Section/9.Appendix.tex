@@ -6,7 +6,12 @@ The framework consists of several key Python modules that implement the core fun
 
 \begin{itemize}
     \item \textbf{eval.py} - Core evaluation implementation that handles the main evaluation logic:
-    \begin{lstlisting}[language=Python, breaklines=true, basicstyle=\ttfamily\scriptsize, commentstyle=\color{gray}]
+    \begin{lstlisting}[
+        language=Python,
+        breaklines=true,
+        basicstyle=\ttfamily\footnotesize,
+        commentstyle=\color{gray}
+    ]
 # Core evaluation class implementing the faithfulness metrics
 class FaithfulnessEval(Eval):
     METRICS = [
@@ -21,21 +26,23 @@ class FaithfulnessEval(Eval):
     # Metric weights for different evaluation types
     TYPE_WEIGHTS = {
         "general": {
-            "factual_accuracy": 0.3,
-            "logical_coherence": 0.2,
+            "factual_accuracy": 0.30,
+            "logical_coherence": 0.20,
             "context_relevance": 0.15,
             "interpretative_reasoning": 0.15,
-            "information_completeness": 0.1,
-            "hallucination_score": 0.1
+            "information_completeness": 0.10,
+            "hallucination_score": 0.10
         }
     }
     
     def eval_sample(self, sample: Dict[str, Any]) -> Dict[str, Any]:
+        # Get key information from sample
         context = sample.get("context", "")
         query = sample.get("query", "")
         reference = sample.get("reference", "")
         sample_type = sample.get("type", "general")
         
+        # Calculate metrics
         metrics = {
             "factual_accuracy": self.metrics.calculate_factual_accuracy(response, reference),
             "logical_coherence": self.metrics.calculate_logical_coherence(response),
@@ -50,8 +57,14 @@ class FaithfulnessEval(Eval):
         }
     \end{lstlisting}
 
+    \vspace{0.5em}
     \item \textbf{metrics.py} - Implementation of individual metric calculations:
-    \begin{lstlisting}[language=Python, breaklines=true, basicstyle=\ttfamily\scriptsize, commentstyle=\color{gray}]
+    \begin{lstlisting}[
+        language=Python,
+        breaklines=true,
+        basicstyle=\ttfamily\footnotesize,
+        commentstyle=\color{gray}
+    ]
 # Class implementing various faithfulness metrics
 class FaithfulnessMetrics:
     def calculate_context_relevance(self, response: str, context: str) -> float:
@@ -66,16 +79,22 @@ class FaithfulnessMetrics:
         
         # Compute final weighted score
         final_score = (
-            semantic_relevance * 0.4 +
-            coverage_score * 0.3 +
-            topic_score * 0.3
+            semantic_relevance * 0.40 +
+            coverage_score * 0.30 +
+            topic_score * 0.30
         )
         
         return float(final_score)
     \end{lstlisting}
 
+    \vspace{0.5em}
     \item \textbf{report.py} - Report generation and visualization functionality:
-    \begin{lstlisting}[language=Python, breaklines=true, basicstyle=\ttfamily\scriptsize, commentstyle=\color{gray}]
+    \begin{lstlisting}[
+        language=Python,
+        breaklines=true,
+        basicstyle=\ttfamily\footnotesize,
+        commentstyle=\color{gray}
+    ]
 # Class handling report generation and visualization
 class FaithfulnessReport:
     def generate_report(self, final_metrics, type_metrics, sample_results):
@@ -92,12 +111,13 @@ class FaithfulnessReport:
         # Add overall metrics section
         content.append("## 1. Overall Metrics")
         for metric, score in final_metrics.items():
-            content.append(f"- {metric}: {score:.4f}")
+            content.append(f"- {metric}: {score:.2f}")
         
         return "\n".join(content)
     \end{lstlisting}
 \end{itemize}
 
+\vspace{0.5em}
 \section{Evaluation Samples}
 
 \subsection{Sample Types}
@@ -106,44 +126,50 @@ The framework includes the following diverse evaluation samples:
 \begin{itemize}
     \item \textbf{Scientific Explanations}:
     \begin{itemize}
-        \item Complex scientific concepts;
-        \item Technical processes;
-        \item Research findings.
+        \item Complex scientific concepts
+        \item Technical processes
+        \item Research findings
     \end{itemize}
-    
+    \vspace{0.5em}
     \item \textbf{Technical Analyses}:
     \begin{itemize}
-        \item System architectures;
-        \item Algorithm explanations;
-        \item Performance evaluations.
+        \item System architectures
+        \item Algorithm explanations
+        \item Performance evaluations
     \end{itemize}
-    
+    \vspace{0.5em}
     \item \textbf{Medical Advice}:
     \begin{itemize}
-        \item Health recommendations;
-        \item Treatment explanations;
-        \item Medical procedures.
+        \item Health recommendations
+        \item Treatment explanations
+        \item Medical procedures
     \end{itemize}
-    
+    \vspace{0.5em}
     \item \textbf{Historical Analyses}:
     \begin{itemize}
-        \item Historical events;
-        \item Cultural developments;
-        \item Societal changes.
+        \item Historical events
+        \item Cultural developments
+        \item Societal changes
     \end{itemize}
-    
+    \vspace{0.5em}
     \item \textbf{Current Events}:
     \begin{itemize}
-        \item Recent developments;
-        \item Ongoing situations;
-        \item Contemporary issues.
+        \item Recent developments
+        \item Ongoing situations
+        \item Contemporary issues
     \end{itemize}
 \end{itemize}
 
+\vspace{0.5em}
 \subsection{Sample Format}
 Example of a sample entry in the \texttt{samples.jsonl} file:
 
-\begin{lstlisting}[language=JSON, breaklines=true, basicstyle=\ttfamily\scriptsize, commentstyle=\color{gray}]
+\begin{lstlisting}[
+    language=JSON,
+    breaklines=true,
+    basicstyle=\ttfamily\footnotesize,
+    commentstyle=\color{gray}
+]
 {
     "id": "sci_001",
     "type": "scientific",

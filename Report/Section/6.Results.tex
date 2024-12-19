@@ -9,7 +9,7 @@ As shown in Table~\ref{tab:results_overall_metrics}, our evaluation reveals dist
 
 \begin{table}[!htbp]
 \centering
-\begin{tabular}{|l|c|c|c|c|c|c|c|}
+\begin{tabular}{|l|r|r|r|r|r|r|r|}
 \hline
 \textbf{Model} & \textbf{FA} & \textbf{LC} & \textbf{CR} & \textbf{IR} 
 & \textbf{IC} & \textbf{HS} & \textbf{OF} \\
@@ -21,13 +21,16 @@ GPT-4 & 0.81 & 0.35 & 0.64 & 0.56 & 0.70 & 0.29 & 0.59 \\
 \end{tabular}
 \caption{Overall Evaluation Metrics}
 \label{tab:results_overall_metrics}
-\begin{flushleft}
+\begin{threeparttable}
+\begin{tablenotes}
 \small
-FA: Factual Accuracy, LC: Logical Coherence, CR: Context Relevance,\\
-IR: Interpretative Reasoning, IC: Information Completeness, HS: Hallucination Score, OF: Overall Faithfulness
-\end{flushleft}
+\item[*] FA: Factual Accuracy, LC: Logical Coherence, CR: Context Relevance,
+\item[*] IR: Interpretative Reasoning, IC: Information Completeness, HS: Hallucination Score, OF: Overall Faithfulness
+\end{tablenotes}
+\end{threeparttable}
 \end{table}
 
+\vspace{0.5em}
 \textbf{Key Observations}:
 \begin{itemize}
     \item \textbf{GPT-3.5-Turbo} achieves 0.84 in factual accuracy, with 
@@ -40,6 +43,7 @@ IR: Interpretative Reasoning, IC: Information Completeness, HS: Hallucination Sc
     relevance (0.64), indicating good context understanding.
 \end{itemize}
 
+\vspace{0.5em}
 \subsubsection{Model Comparison}
 To better understand the relative strengths and weaknesses of each model, we conducted a detailed comparative analysis across all evaluation dimensions. As shown in Figure~\ref{fig:model_comparison}, the performance patterns reveal significant insights into model capabilities.
 
@@ -50,6 +54,7 @@ To better understand the relative strengths and weaknesses of each model, we con
 \label{fig:model_comparison}
 \end{figure}
 
+\vspace{0.5em}
 The model comparison reveals several interesting patterns:
 \begin{itemize}
     \item Factual accuracy remains consistently high across all models (>0.75)
@@ -57,22 +62,28 @@ The model comparison reveals several interesting patterns:
     \item Information completeness demonstrates an inverse relationship with hallucination scores
 \end{itemize}
 
+\vspace{0.5em}
 \subsubsection{Overall Metrics Radar Charts}
 The radar charts in Figure~\ref{fig:overall_metrics_radar} provide a multidimensional view of each model's performance, highlighting their unique characteristics and balance across different metrics.
 
 \begin{figure}[!htbp]
 \centering
-\begin{subfigure}{0.3\textwidth}
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
     \includegraphics[width=\textwidth]{figures/overall/overall_metrics_radar_gpt-3.5-turbo.png}
     \caption{GPT-3.5-Turbo Metrics}
     \label{fig:overall_metrics_radar_gpt35}
 \end{subfigure}
-\begin{subfigure}{0.3\textwidth}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
     \includegraphics[width=\textwidth]{figures/overall/overall_metrics_radar_gpt-4-turbo.png}
     \caption{GPT-4-Turbo Metrics}
     \label{fig:overall_metrics_radar_gpt4t}
 \end{subfigure}
-\begin{subfigure}{0.3\textwidth}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
     \includegraphics[width=\textwidth]{figures/overall/overall_metrics_radar_gpt-4.png}
     \caption{GPT-4 Metrics}
     \label{fig:overall_metrics_radar_gpt4}
