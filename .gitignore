@@ -33,7 +33,6 @@ env/
 *.swo
 
 # Logs and databases
-*.log
 *.sqlite
 
 # OS
@@ -47,7 +46,6 @@ Thumbs.db
 
 # LaTeX生成文件
 *.aux
-*.log
 *.out
 *.toc
 *.lof

@@ -1,0 +1,63 @@
+2024-12-12 17:48:48,132 - INFO - Starting Faithfulness Evaluation - Model: gpt-4-turbo
+2024-12-12 17:48:48,132 - INFO - Output Directory: results/faithfulness_eval_20241212_174848
+2024-12-12 17:48:49,304 - INFO - Fetching evals/registry/data/faithfulness/samples.jsonl
+2024-12-12 17:52:15,746 - INFO - Evaluation report generated: results/faithfulness_eval_20241212_174848/reports/report_20241212_175207_gpt-4-turbo/report_gpt-4-turbo.md
+2024-12-12 17:52:15,746 - INFO - 
+=== Evaluation Complete ===
+2024-12-12 17:52:15,746 - INFO - Report Path: results/faithfulness_eval_20241212_174848/reports/report_20241212_175207_gpt-4-turbo/report_gpt-4-turbo.md
+2024-12-12 17:52:15,746 - INFO - 
+Overall Evaluation Results:
+2024-12-12 17:52:15,746 - INFO - factual_accuracy: 0.7572
+2024-12-12 17:52:15,746 - INFO - logical_coherence: 0.3082
+2024-12-12 17:52:15,746 - INFO - context_relevance: 0.6031
+2024-12-12 17:52:15,746 - INFO - interpretative_reasoning: 0.5411
+2024-12-12 17:52:15,746 - INFO - information_completeness: 0.7922
+2024-12-12 17:52:15,746 - INFO - hallucination_score: 0.2107
+2024-12-12 17:52:15,746 - INFO - overall_faithfulness: 0.5607
+2024-12-12 17:52:15,746 - INFO - 
+Type-Specific Evaluation Results:
+2024-12-12 17:52:15,746 - INFO - 
+scientific_explanation:
+2024-12-12 17:52:15,746 - INFO -   factual_accuracy: 0.7199
+2024-12-12 17:52:15,746 - INFO -   logical_coherence: 0.3398
+2024-12-12 17:52:15,746 - INFO -   context_relevance: 0.5888
+2024-12-12 17:52:15,746 - INFO -   interpretative_reasoning: 0.5179
+2024-12-12 17:52:15,746 - INFO -   information_completeness: 0.7923
+2024-12-12 17:52:15,746 - INFO -   hallucination_score: 0.1892
+2024-12-12 17:52:15,746 - INFO -   overall_faithfulness: 0.5481
+2024-12-12 17:52:15,746 - INFO - 
+technical_analysis:
+2024-12-12 17:52:15,746 - INFO -   factual_accuracy: 0.7540
+2024-12-12 17:52:15,746 - INFO -   logical_coherence: 0.2071
+2024-12-12 17:52:15,746 - INFO -   context_relevance: 0.5570
+2024-12-12 17:52:15,746 - INFO -   interpretative_reasoning: 0.5874
+2024-12-12 17:52:15,746 - INFO -   information_completeness: 0.7946
+2024-12-12 17:52:15,746 - INFO -   hallucination_score: 0.1653
+2024-12-12 17:52:15,746 - INFO -   overall_faithfulness: 0.5353
+2024-12-12 17:52:15,746 - INFO - 
+medical_advice:
+2024-12-12 17:52:15,746 - INFO -   factual_accuracy: 0.7951
+2024-12-12 17:52:15,746 - INFO -   logical_coherence: 0.3453
+2024-12-12 17:52:15,746 - INFO -   context_relevance: 0.6105
+2024-12-12 17:52:15,747 - INFO -   interpretative_reasoning: 0.5156
+2024-12-12 17:52:15,747 - INFO -   information_completeness: 0.8247
+2024-12-12 17:52:15,747 - INFO -   hallucination_score: 0.3218
+2024-12-12 17:52:15,747 - INFO -   overall_faithfulness: 0.5912
+2024-12-12 17:52:15,747 - INFO - 
+current_events:
+2024-12-12 17:52:15,747 - INFO -   factual_accuracy: 0.7642
+2024-12-12 17:52:15,747 - INFO -   logical_coherence: 0.3925
+2024-12-12 17:52:15,747 - INFO -   context_relevance: 0.5106
+2024-12-12 17:52:15,747 - INFO -   interpretative_reasoning: 0.5353
+2024-12-12 17:52:15,747 - INFO -   information_completeness: 0.7550
+2024-12-12 17:52:15,747 - INFO -   hallucination_score: 0.2678
+2024-12-12 17:52:15,747 - INFO -   overall_faithfulness: 0.5669
+2024-12-12 17:52:15,747 - INFO - 
+historical_analysis:
+2024-12-12 17:52:15,747 - INFO -   factual_accuracy: 0.7528
+2024-12-12 17:52:15,747 - INFO -   logical_coherence: 0.2565
+2024-12-12 17:52:15,747 - INFO -   context_relevance: 0.7485
+2024-12-12 17:52:15,747 - INFO -   interpretative_reasoning: 0.5494
+2024-12-12 17:52:15,747 - INFO -   information_completeness: 0.7947
+2024-12-12 17:52:15,747 - INFO -   hallucination_score: 0.1092
+2024-12-12 17:52:15,747 - INFO -   overall_faithfulness: 0.5622
