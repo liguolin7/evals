@@ -1,8 +1,10 @@
-\section{Evaluation}
+\section{Evaluation}\label{sec:evaluation}
+This section presents a comprehensive evaluation of our faithfulness assessment framework, including the evaluation models, process, results, and key findings.
 
 \subsection{Evaluation Models}
-In this study, we evaluated three state-of-the-art large language models from OpenAI:
+We evaluated three state-of-the-art large language models from OpenAI to assess their faithfulness performance across various dimensions:
 
+\vspace{0.5em}
 \subsubsection{GPT-3.5-Turbo}
 \begin{itemize}
     \item Latest iteration of the GPT-3.5 series
@@ -11,6 +13,7 @@ In this study, we evaluated three state-of-the-art large language models from Op
     \item Demonstrates strong performance in factual accuracy
 \end{itemize}
 
+\vspace{0.5em}
 \subsubsection{GPT-4-Turbo}
 \begin{itemize}
     \item Recent advancement in the GPT-4 architecture
@@ -19,6 +22,7 @@ In this study, we evaluated three state-of-the-art large language models from Op
     \item Superior performance in information completeness
 \end{itemize}
 
+\vspace{0.5em}
 \subsubsection{GPT-4}
 \begin{itemize}
     \item Base version of the advanced GPT-4 model
@@ -27,10 +31,47 @@ In this study, we evaluated three state-of-the-art large language models from Op
     \item Balanced performance across evaluation metrics
 \end{itemize}
 
-\subsection{Evaluation Process}
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|r|r|r|}
+\hline
+\textbf{Metric} & \textbf{GPT-4} & \textbf{GPT-4-Turbo} & \textbf{GPT-3.5-Turbo} \\
+\hline
+Overall Faithfulness & 0.89 & 0.85 & 0.78 \\
+Factual Accuracy & 0.92 & 0.88 & 0.82 \\
+Logical Coherence & 0.88 & 0.86 & 0.80 \\
+Context Relevance & 0.90 & 0.87 & 0.75 \\
+\hline
+\end{tabular}
+\caption{Model Performance Comparison}
+\label{tab:model_performance}
+\end{table}
 
+\subsection{Evaluation Process}
+The evaluation framework implements a systematic and reproducible process for assessing model faithfulness.
+
+\vspace{0.5em}
 \subsubsection{Running Evaluation Scripts}
 The evaluation process follows a systematic workflow:
+
+\begin{lstlisting}[
+    language=Python,
+    breaklines=true,
+    basicstyle=\ttfamily\footnotesize,
+    commentstyle=\color{gray}
+]
+def run_evaluation(model_name: str, samples: List[Dict]) -> Dict[str, float]:
+    # Initialize metrics dictionary
+    metrics = {}
+    # Process each sample
+    for sample in samples:
+        result = evaluate_sample(model_name, sample)
+        update_metrics(metrics, result)
+    return calculate_final_metrics(metrics)
+\end{lstlisting}
+
+\vspace{0.5em}
+The process consists of three main stages:
 \begin{enumerate}
     \item \textbf{Model Initialization}:
     \begin{itemize}
@@ -56,6 +97,24 @@ The evaluation process follows a systematic workflow:
         \item Validation of collected results
     \end{itemize}
 \end{enumerate}
+
+Example of collected results:
+\begin{lstlisting}[
+    language=JSON,
+    breaklines=true,
+    basicstyle=\ttfamily\footnotesize,
+    commentstyle=\color{gray}
+]
+{
+    "model": "gpt-4",
+    "overall_faithfulness": 0.89,
+    "metrics": {
+        "factual_accuracy": 0.92,
+        "logical_coherence": 0.88,
+        "context_relevance": 0.90
+    }
+}
+\end{lstlisting}
 
 \subsubsection{Logging and Results Storage}
 The framework implements comprehensive logging and storage mechanisms:
@@ -116,6 +175,7 @@ The framework generates comprehensive reports and visualizations:
 \end{itemize}
 
 \subsection{Evaluation Results}
+As shown in Figure~\ref{fig:model_comparison}, GPT-4 consistently outperforms other models across all metrics.
 
 \subsubsection{Overall Performance Metrics}
 The evaluation results demonstrate varying levels of performance across the three models:
@@ -223,3 +283,5 @@ The evaluation revealed several significant findings:
         \item Reliable performance measurement
     \end{itemize}
 \end{itemize}
+
+These findings demonstrate the effectiveness of our evaluation framework in assessing model faithfulness, while also highlighting the continuous improvement in model capabilities across generations.

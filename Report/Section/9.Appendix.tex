@@ -2,11 +2,12 @@
 \section{Code Listings}
 
 \subsection{Core Components}
-The framework consists of several key Python modules:
+The framework consists of several key Python modules that implement the core functionality:
 
 \begin{itemize}
-    \item \textbf{eval.py} - Core evaluation implementation:
-    \begin{lstlisting}[language=Python, breaklines=true, basicstyle=\ttfamily\scriptsize]
+    \item \textbf{eval.py} - Core evaluation implementation that handles the main evaluation logic:
+    \begin{lstlisting}[language=Python, breaklines=true, basicstyle=\ttfamily\scriptsize, commentstyle=\color{gray}]
+# Core evaluation class implementing the faithfulness metrics
 class FaithfulnessEval(Eval):
     METRICS = [
         "factual_accuracy",
@@ -17,6 +18,7 @@ class FaithfulnessEval(Eval):
         "hallucination_score"
     ]
     
+    # Metric weights for different evaluation types
     TYPE_WEIGHTS = {
         "general": {
             "factual_accuracy": 0.3,
@@ -48,20 +50,21 @@ class FaithfulnessEval(Eval):
         }
     \end{lstlisting}
 
-    \item \textbf{metrics.py} - Metric calculation implementation:
-    \begin{lstlisting}[language=Python, breaklines=true, basicstyle=\ttfamily\scriptsize]
+    \item \textbf{metrics.py} - Implementation of individual metric calculations:
+    \begin{lstlisting}[language=Python, breaklines=true, basicstyle=\ttfamily\scriptsize, commentstyle=\color{gray}]
+# Class implementing various faithfulness metrics
 class FaithfulnessMetrics:
     def calculate_context_relevance(self, response: str, context: str) -> float:
-        # Calculate semantic relevance
+        # Calculate semantic relevance between response and context
         semantic_relevance = self.calculate_semantic_similarity(response, context)
         
-        # Calculate information coverage
+        # Calculate information coverage ratio
         coverage_score = self.calculate_coverage(response, context)
         
-        # Calculate topic consistency
+        # Calculate topic consistency score
         topic_score = self.calculate_topic_consistency(response, context)
         
-        # Final weighted score
+        # Compute final weighted score
         final_score = (
             semantic_relevance * 0.4 +
             coverage_score * 0.3 +
@@ -71,21 +74,22 @@ class FaithfulnessMetrics:
         return float(final_score)
     \end{lstlisting}
 
-    \item \textbf{report.py} - Report generation implementation:
-    \begin{lstlisting}[language=Python, breaklines=true, basicstyle=\ttfamily\scriptsize]
+    \item \textbf{report.py} - Report generation and visualization functionality:
+    \begin{lstlisting}[language=Python, breaklines=true, basicstyle=\ttfamily\scriptsize, commentstyle=\color{gray}]
+# Class handling report generation and visualization
 class FaithfulnessReport:
     def generate_report(self, final_metrics, type_metrics, sample_results):
-        # Generate visualizations
+        # Generate various visualization types
         self._generate_radar_charts()
         self._generate_heatmaps()
         self._generate_boxplots()
         self._generate_trend_plots()
         
-        # Generate report content
+        # Generate report content structure
         content = []
         content.append("# Evaluation Report\n")
         
-        # Add overall metrics
+        # Add overall metrics section
         content.append("## 1. Overall Metrics")
         for metric, score in final_metrics.items():
             content.append(f"- {metric}: {score:.4f}")
@@ -97,48 +101,49 @@ class FaithfulnessReport:
 \section{Evaluation Samples}
 
 \subsection{Sample Types}
-The framework includes diverse evaluation samples:
+The framework includes the following diverse evaluation samples:
 
 \begin{itemize}
     \item \textbf{Scientific Explanations}:
     \begin{itemize}
-        \item Complex scientific concepts
-        \item Technical processes
-        \item Research findings
+        \item Complex scientific concepts;
+        \item Technical processes;
+        \item Research findings.
     \end{itemize}
     
     \item \textbf{Technical Analyses}:
     \begin{itemize}
-        \item System architectures
-        \item Algorithm explanations
-        \item Performance evaluations
+        \item System architectures;
+        \item Algorithm explanations;
+        \item Performance evaluations.
     \end{itemize}
     
     \item \textbf{Medical Advice}:
     \begin{itemize}
-        \item Health recommendations
-        \item Treatment explanations
-        \item Medical procedures
+        \item Health recommendations;
+        \item Treatment explanations;
+        \item Medical procedures.
     \end{itemize}
     
     \item \textbf{Historical Analyses}:
     \begin{itemize}
-        \item Historical events
-        \item Cultural developments
-        \item Societal changes
+        \item Historical events;
+        \item Cultural developments;
+        \item Societal changes.
     \end{itemize}
     
     \item \textbf{Current Events}:
     \begin{itemize}
-        \item Recent developments
-        \item Ongoing situations
-        \item Contemporary issues
+        \item Recent developments;
+        \item Ongoing situations;
+        \item Contemporary issues.
     \end{itemize}
 \end{itemize}
 
 \subsection{Sample Format}
-Example of a sample in \texttt{samples.jsonl}:
-\begin{lstlisting}[language=JSON, breaklines=true, basicstyle=\ttfamily\scriptsize]
+Example of a sample entry in the \texttt{samples.jsonl} file:
+
+\begin{lstlisting}[language=JSON, breaklines=true, basicstyle=\ttfamily\scriptsize, commentstyle=\color{gray}]
 {
     "id": "sci_001",
     "type": "scientific",
@@ -155,10 +160,11 @@ Example of a sample in \texttt{samples.jsonl}:
 
 \section{Framework Configuration}
 
-\subsection{Configuration File (faithfulness.yaml)}
-The core configuration file defines evaluation parameters:
+\subsection{Configuration File}
+The core configuration file (\texttt{faithfulness.yaml}) defines the evaluation parameters:
 
-\begin{lstlisting}[language=YAML, breaklines=true, basicstyle=\ttfamily\scriptsize]
+\begin{lstlisting}[language=YAML, breaklines=true, basicstyle=\ttfamily\scriptsize, commentstyle=\color{gray}]
+# Main configuration for faithfulness evaluation
 faithfulness_eval:
   id: faithfulness_eval.v1
   description: Framework for evaluating LLM response faithfulness
@@ -170,6 +176,7 @@ faithfulness_eval:
     - information_completeness
     - hallucination_score
   
+  # Weight configurations for different evaluation types
   weights:
     default:
       factual_accuracy: 0.25
@@ -189,27 +196,31 @@ faithfulness_eval:
 \end{lstlisting}
 
 \subsection{Dynamic Weight Adjustment Rules}
-The framework implements dynamic weight adjustment based on evaluation results:
+The framework implements the following dynamic weight adjustment rules based on evaluation results:
 
 \begin{itemize}
     \item When factual accuracy is low (score < 0.5):
     \begin{itemize}
-        \item Factual accuracy weight increases to 35\%
-        \item Hallucination score weight increases to 20\%
-        \item Other metrics share the remaining 45\%
+        \item Factual accuracy weight increases to 35\%;
+        \item Hallucination score weight increases to 20\%;
+        \item Other metrics share the remaining 45\%.
     \end{itemize}
     
     \item When hallucination is severe (score < 0.5):
     \begin{itemize}
-        \item Hallucination score weight increases to 25\%
-        \item Factual accuracy weight increases to 30\%
-        \item Other metrics share the remaining 45\%
+        \item Hallucination score weight increases to 25\%;
+        \item Factual accuracy weight increases to 30\%;
+        \item Other metrics share the remaining 45\%.
     \end{itemize}
-    \item Normal conditions maintain standard weights as defined in the configuration
+    
+    \item Under normal conditions:
+    \begin{itemize}
+        \item Standard weights are maintained as defined in the configuration file.
+    \end{itemize}
 \end{itemize}
 
 \section{Project Structure}
-The complete project structure:
+The complete project structure is organized as follows:
 
 \begin{lstlisting}[language=Text, breaklines=true, basicstyle=\ttfamily\scriptsize]
 project_root/

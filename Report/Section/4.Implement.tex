@@ -3,7 +3,12 @@
 \subsection{Project Structure}
 The project follows a well-organized modular architecture:
 
-\begin{lstlisting}[basicstyle=\ttfamily\small,breaklines=true,columns=flexible]
+\begin{lstlisting}[
+    language=Text,
+    breaklines=true,
+    basicstyle=\ttfamily\footnotesize,
+    commentstyle=\color{gray}
+]
 project_root/
 |-- evals/
 |   `-- elsuite/
@@ -32,12 +37,18 @@ project_root/
 `-- environment.yml             # Project dependencies
 \end{lstlisting}
 
+\vspace{0.5em}
 \subsection{Core Components Analysis}
 
 \subsubsection{Evaluation Core (eval.py)}
 The \texttt{FaithfulnessEval} class implements the core evaluation process:
 
-\begin{lstlisting}[basicstyle=\ttfamily\small,breaklines=true,columns=flexible]
+\begin{lstlisting}[
+    language=Python,
+    breaklines=true,
+    basicstyle=\ttfamily\footnotesize,
+    commentstyle=\color{gray}
+]
 class FaithfulnessEval(Eval):
     # Define evaluation metrics
     METRICS = [
@@ -52,14 +63,13 @@ class FaithfulnessEval(Eval):
     # Define evaluation weights for different types
     TYPE_WEIGHTS = {
         "general": {
-            "factual_accuracy": 0.3,
-            "logical_coherence": 0.2,
+            "factual_accuracy": 0.30,
+            "logical_coherence": 0.20,
             "context_relevance": 0.15,
             "interpretative_reasoning": 0.15,
-            "information_completeness": 0.1,
-            "hallucination_score": 0.1
+            "information_completeness": 0.10,
+            "hallucination_score": 0.10
         }
-        # Other type weights...
     }
     
     def eval_sample(self, sample: Dict[str, Any]) -> Dict[str, Any]:
@@ -76,8 +86,7 @@ class FaithfulnessEval(Eval):
             "logical_coherence": self.metrics.calculate_logical_coherence(
                 response),
             "context_relevance": self.metrics.calculate_context_relevance(
-                response, context),
-            # ... other metrics
+                response, context)
         }
         
         return {
@@ -88,6 +97,7 @@ class FaithfulnessEval(Eval):
         }
 \end{lstlisting}
 
+\vspace{0.5em}
 Key features include:
 \begin{itemize}
     \item Sample loading and preprocessing
@@ -100,7 +110,7 @@ Key features include:
 \subsubsection{Metrics Implementation (metrics.py)}
 The \texttt{FaithfulnessMetrics} class provides metric calculations:
 
-\begin{lstlisting}[basicstyle=\ttfamily\small,breaklines=true,columns=flexible]
+\begin{lstlisting}[language=Python, breaklines=true, basicstyle=\ttfamily\footnotesize]
 class FaithfulnessMetrics:
     def calculate_context_relevance(self, response: str, context: str) -> float:
         # Calculate semantic relevance
@@ -145,7 +155,7 @@ class FaithfulnessMetrics:
 \subsubsection{Report Generation (report.py)}
 The \texttt{FaithfulnessReport} class handles report generation:
 
-\begin{lstlisting}[basicstyle=\ttfamily\small,breaklines=true,columns=flexible]
+\begin{lstlisting}[language=Python, breaklines=true, basicstyle=\ttfamily\footnotesize]
 class FaithfulnessReport:
     def generate_report(self, final_metrics, type_metrics, sample_results):
         # Generate visualizations
@@ -196,24 +206,24 @@ Essential components:
 Setup steps:
 \begin{enumerate}
     \item \textbf{Environment Creation}:
-    \begin{lstlisting}[basicstyle=\ttfamily\small]
-    conda env create -n evals -f environment.yml
-    conda activate evals
+    \begin{lstlisting}[breaklines=true, basicstyle=\ttfamily\footnotesize]
+conda env create -n evals -f environment.yml
+conda activate evals
     \end{lstlisting}
 
     \item \textbf{Package Installation}:
-    \begin{lstlisting}[basicstyle=\ttfamily\small]
-    pip install -r requirements.txt
+    \begin{lstlisting}[breaklines=true, basicstyle=\ttfamily\footnotesize]
+pip install -r requirements.txt
     \end{lstlisting}
 
     \item \textbf{NLTK Resources}:
-    \begin{lstlisting}[basicstyle=\ttfamily\small]
-    python -m nltk.downloader punkt wordnet
+    \begin{lstlisting}[breaklines=true, basicstyle=\ttfamily\footnotesize]
+python -m nltk.downloader punkt wordnet
     \end{lstlisting}
 
     \item \textbf{API Configuration}:
-    \begin{lstlisting}[basicstyle=\ttfamily\small]
-    export OPENAI_API_KEY="your-api-key"
+    \begin{lstlisting}[breaklines=true, basicstyle=\ttfamily\footnotesize]
+export OPENAI_API_KEY="your-api-key"
     \end{lstlisting}
 \end{enumerate}
 
@@ -274,7 +284,7 @@ Settings in \texttt{faithfulness.yaml}:
 \subsection{Usage Example}
 Basic evaluation workflow:
 
-\begin{lstlisting}[basicstyle=\ttfamily\small,breaklines=true,columns=flexible]
+\begin{lstlisting}[language=Python, breaklines=true, basicstyle=\ttfamily\footnotesize]
 from evals.elsuite.faithfulness.eval import FaithfulnessEval
 from evals.record import RecorderBase
 from evals.completion_fns.openai import OpenAIChatCompletionFn

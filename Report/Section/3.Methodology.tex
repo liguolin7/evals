@@ -1,51 +1,91 @@
-\section{Methodology}
+\section{Methodology}\label{sec:methodology}
 
 \subsection{Faithfulness Evaluation Framework Overview}
 The faithfulness evaluation framework is designed to provide a comprehensive assessment of LLM outputs through multiple dimensions. At its core, the framework employs advanced natural language processing techniques, including pre-trained language models for semantic analysis and sophisticated metrics for various aspects of output evaluation.
 
+\vspace{0.5em}
 \subsubsection{Framework Definition}
-The framework focuses on evaluating the faithfulness of LLM outputs by:
+The framework focuses on evaluating the faithfulness of LLM outputs through:
 \begin{itemize}
-    \item Assessing multiple dimensions of response quality
-    \item Employing sophisticated NLP techniques
-    \item Utilizing pre-trained language models
-    \item Implementing dynamic weight adjustment
+    \item \textbf{Multi-dimensional Assessment}:
+    \begin{itemize}
+        \item \textit{Quality Metrics}: Multiple dimensions of response quality
+        \item \textit{Technical Foundation}: Advanced NLP techniques
+        \item \textit{Model Integration}: Pre-trained language models
+        \item \textit{Dynamic Adaptation}: Weight adjustment mechanisms
+    \end{itemize}
 \end{itemize}
 
+\vspace{0.5em}
 \subsubsection{Evaluation Process}
 The evaluation workflow consists of four main stages:
-\begin{enumerate}
-    \item Input processing and tokenization using specialized NLP tools
-    \item Multi-dimensional metric calculation for each response
-    \item Dynamic weight adjustment based on initial results
-    \item Generation of comprehensive evaluation reports and visualizations
-\end{enumerate}
+\begin{itemize}
+    \item \textbf{Stage 1}: \textit{Input Processing}
+    \begin{itemize}
+        \item Text preprocessing and normalization
+        \item Tokenization using specialized NLP tools
+        \item Feature extraction and representation
+    \end{itemize}
+    
+    \item \textbf{Stage 2}: \textit{Metric Calculation}
+    \begin{itemize}
+        \item Multi-dimensional metric computation
+        \item Score normalization and calibration
+        \item Quality assurance checks
+    \end{itemize}
+    
+    \item \textbf{Stage 3}: \textit{Weight Adjustment}
+    \begin{itemize}
+        \item Dynamic weight calculation
+        \item Context-specific adaptation
+        \item Performance optimization
+    \end{itemize}
+    
+    \item \textbf{Stage 4}: \textit{Report Generation}
+    \begin{itemize}
+        \item Comprehensive evaluation reports
+        \item Visualization generation
+        \item Result analysis and insights
+    \end{itemize}
+\end{itemize}
 
 \subsection{Evaluation Metrics}
 Our framework implements six core metrics, each designed to capture different aspects of output faithfulness:
 
+\vspace{0.5em}
 \subsubsection{Factual Accuracy}
-Evaluates the accuracy of response content against reference material:
+\textbf{Purpose}: Evaluates the accuracy of response content against reference material
 \begin{itemize}
-    \item \textbf{Semantic Similarity}: Using sentence-transformers for embedding-based comparison
-    \item \textbf{Key Fact Matching}: Identifying and verifying critical factual elements
-    \item \textbf{Numerical Accuracy}: Specific verification of numerical values and statistics
+    \item \textbf{Key Components}:
+    \begin{itemize}
+        \item \textit{Semantic Analysis}: Using sentence-transformers for embedding-based comparison
+        \item \textit{Fact Verification}: Identifying and verifying critical factual elements
+        \item \textit{Numerical Validation}: Specific verification of numerical values and statistics
+    \end{itemize}
 \end{itemize}
 
+\vspace{0.5em}
 \subsubsection{Logical Coherence}
-Assesses the internal logical structure and flow:
+\textbf{Purpose}: Assesses the internal logical structure and flow
 \begin{itemize}
-    \item \textbf{Inter-sentence Coherence}: Analyzing semantic relationships between sentences
-    \item \textbf{Argumentation Structure}: Evaluating logical flow and reasoning patterns
-    \item \textbf{Logical Connector Usage}: Examining transition words and phrases
+    \item \textbf{Key Components}:
+    \begin{itemize}
+        \item \textit{Coherence Analysis}: Analyzing semantic relationships between sentences
+        \item \textit{Structure Evaluation}: Evaluating logical flow and reasoning patterns
+        \item \textit{Transition Analysis}: Examining logical connectors and phrases
+    \end{itemize}
 \end{itemize}
 
+\vspace{0.5em}
 \subsubsection{Context Relevance}
-Measures alignment with provided context:
+\textbf{Purpose}: Measures alignment with provided context
 \begin{itemize}
-    \item \textbf{Semantic Relevance}: Computing contextual similarity scores
-    \item \textbf{Key Information Coverage}: Assessing critical context elements
-    \item \textbf{Topic Consistency}: Evaluating topic adherence
+    \item \textbf{Key Components}:
+    \begin{itemize}
+        \item \textit{Semantic Relevance}: Computing contextual similarity scores
+        \item \textit{Coverage Analysis}: Assessing critical context elements
+        \item \textit{Topic Alignment}: Evaluating topic adherence
+    \end{itemize}
 \end{itemize}
 
 \subsubsection{Interpretative Reasoning}
@@ -75,33 +115,37 @@ Identifies and quantifies potential hallucinations:
 \subsection{Dynamic Weight Adjustment}
 The framework implements an adaptive weight adjustment mechanism that modifies metric weights based on evaluation scenarios and response characteristics.
 
-\subsubsection{Weight Adjustment Mechanism}
-The base weight distribution is as follows:
+\vspace{0.5em}
+\subsubsection{Base Weight Distribution}
+\textbf{Default Configuration}:
 \begin{itemize}
-    \item Factual Accuracy: 25\%
-    \item Logical Coherence: 15\%
-    \item Context Relevance: 15\%
-    \item Interpretative Reasoning: 15\%
-    \item Information Completeness: 15\%
-    \item Hallucination Score: 15\%
+    \item \textbf{Primary Metrics}:
+    \begin{itemize}
+        \item \textit{Factual Accuracy}: 25\% weight
+        \item \textit{Logical Coherence}: 15\% weight
+        \item \textit{Context Relevance}: 15\% weight
+        \item \textit{Interpretative Reasoning}: 15\% weight
+        \item \textit{Information Completeness}: 15\% weight
+        \item \textit{Hallucination Score}: 15\% weight
+    \end{itemize}
 \end{itemize}
 
+\vspace{0.5em}
 \subsubsection{Adjustment Rules}
-Weights are dynamically adjusted based on specific triggers:
-
+\textbf{Dynamic Scenarios}:
 \begin{itemize}
-    \item \textbf{Low Factual Accuracy Scenario} (accuracy < 0.5):
+    \item \textbf{Low Accuracy Case} (accuracy < 0.5):
     \begin{itemize}
-        \item Factual Accuracy weight: 35\%
-        \item Hallucination Score weight: 20\%
-        \item Other metrics: 45\% (equally distributed)
+        \item \textit{Factual Accuracy}: Increased to 35\%
+        \item \textit{Hallucination Score}: Increased to 20\%
+        \item \textit{Other Metrics}: Remaining 45\% (distributed equally)
     \end{itemize}
     
-    \item \textbf{High Hallucination Scenario} (hallucination score < 0.5):
+    \item \textbf{High Hallucination Case} (hallucination score < 0.5):
     \begin{itemize}
-        \item Hallucination Score weight: 25\%
-        \item Factual Accuracy weight: 30\%
-        \item Other metrics: 45\% (equally distributed)
+        \item \textit{Hallucination Score}: Increased to 25\%
+        \item \textit{Factual Accuracy}: Increased to 30\%
+        \item \textit{Other Metrics}: Remaining 45\% (distributed equally)
     \end{itemize}
 \end{itemize}
 
@@ -168,11 +212,10 @@ The \texttt{FaithfulnessReport} class handles:
 \subsection{Sample Type-Specific Weights}
 Different types of evaluation samples have specific metric weight distributions:
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
-\caption{Metric Weights by Sample Type}
-\label{tab:metric_weights}
-\begin{tabular}{|l|c|c|c|c|c|c|}
+\small
+\begin{tabular}{|l|r|r|r|r|r|r|}
 \hline
 \textbf{Type} & \textbf{FA} & \textbf{LC} & \textbf{CR} & \textbf{IR} & \textbf{IC} & \textbf{HS} \\
 \hline
@@ -183,6 +226,15 @@ Historical & 0.30 & 0.20 & 0.15 & 0.15 & 0.10 & 0.10 \\
 Legal & 0.30 & 0.25 & 0.15 & 0.15 & 0.10 & 0.05 \\
 \hline
 \end{tabular}
+\caption{Metric Weights by Sample Type}
+\label{tab:metric_weights}
+\begin{threeparttable}
+\begin{tablenotes}
+\small
+\item[*] FA: Factual Accuracy, LC: Logical Coherence, CR: Context Relevance,
+\item[*] IR: Interpretative Reasoning, IC: Information Completeness, HS: Hallucination Score
+\end{tablenotes}
+\end{threeparttable}
 \end{table}
 
 \subsection{Technical Implementation}
@@ -190,18 +242,27 @@ The framework utilizes advanced NLP techniques and models:
 
 \subsubsection{Text Embedding}
 Sentence-Transformers model is used for text embedding:
-\begin{verbatim}
+\begin{lstlisting}[
+    language=Python,
+    breaklines=true,
+    basicstyle=\ttfamily\footnotesize,
+    commentstyle=\color{gray},
+    columns=flexible,
+    breakatwhitespace=true
+]
 def get_embeddings(self, text: str) -> np.ndarray:
+    # Initialize tokenizer with input text
     inputs = self.tokenizer(
         text, 
         return_tensors="pt", 
         padding=True, 
         truncation=True
     )
+    # Generate embeddings
     outputs = self.model(**inputs)
     embeddings = outputs.last_hidden_state.mean(dim=1)
     return embeddings.detach().numpy()
-\end{verbatim}
+\end{lstlisting}
 
 \subsubsection{Evaluation Process Flow}
 The evaluation process follows a systematic workflow:

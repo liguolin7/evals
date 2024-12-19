@@ -1,46 +1,47 @@
 \section{Results}
+This section presents the detailed results of our evaluation framework, including comprehensive analysis across different models, sample types, and evaluation metrics.
 
 \subsection{Overall Evaluation Results}
+The overall evaluation results demonstrate the performance characteristics of each model across our comprehensive set of metrics.
 
 \subsubsection{Evaluation Metrics Table}
-Table~\ref{tab:results_overall_metrics} presents a comprehensive overview of the evaluation metrics across different models:
+As shown in Table~\ref{tab:results_overall_metrics}, our evaluation reveals distinct performance patterns across different models:
 
 \begin{table}[!htbp]
 \centering
-\caption{Overall Evaluation Metrics}
-\label{tab:results_overall_metrics}
-\small
 \begin{tabular}{|l|c|c|c|c|c|c|c|}
 \hline
-\textbf{Model} & \textbf{F.A.} & \textbf{L.C.} & \textbf{C.R.} & \textbf{I.R.} 
-& \textbf{I.C.} & \textbf{H.S.} & \textbf{O.F.} \\
+\textbf{Model} & \textbf{FA} & \textbf{LC} & \textbf{CR} & \textbf{IR} 
+& \textbf{IC} & \textbf{HS} & \textbf{OF} \\
 \hline
-GPT-3.5-Turbo & 0.8356 & 0.4085 & 0.5860 & 0.5168 & 0.7309 & 0.3722 & 0.6081 \\
-GPT-4-Turbo & 0.7572 & 0.3082 & 0.6031 & 0.5411 & 0.7922 & 0.2107 & 0.5607 \\
-GPT-4 & 0.8132 & 0.3476 & 0.6438 & 0.5565 & 0.7042 & 0.2867 & 0.5926 \\
+GPT-3.5-Turbo & 0.84 & 0.41 & 0.59 & 0.52 & 0.73 & 0.37 & 0.61 \\
+GPT-4-Turbo & 0.76 & 0.31 & 0.60 & 0.54 & 0.79 & 0.21 & 0.56 \\
+GPT-4 & 0.81 & 0.35 & 0.64 & 0.56 & 0.70 & 0.29 & 0.59 \\
 \hline
 \end{tabular}
+\caption{Overall Evaluation Metrics}
+\label{tab:results_overall_metrics}
 \begin{flushleft}
 \small
-F.A.: Factual Accuracy, L.C.: Logical Coherence, C.R.: Context Relevance,\\
-I.R.: Interpretative Reasoning, I.C.: Info. Completeness, H.S.: Hallucination Score, O.F.: Overall Faith.
+FA: Factual Accuracy, LC: Logical Coherence, CR: Context Relevance,\\
+IR: Interpretative Reasoning, IC: Information Completeness, HS: Hallucination Score, OF: Overall Faithfulness
 \end{flushleft}
 \end{table}
 
 \textbf{Key Observations}:
 \begin{itemize}
-    \item \textbf{GPT-3.5-Turbo} achieves 0.8356 in factual accuracy, with 
-    balanced metrics leading to 0.6081 overall score.
+    \item \textbf{GPT-3.5-Turbo} achieves 0.84 in factual accuracy, with 
+    balanced metrics leading to 0.61 overall score.
     
-    \item \textbf{GPT-4-Turbo} excels in information completeness (0.7922), 
-    though lower logical coherence (0.3082) affects overall results.
+    \item \textbf{GPT-4-Turbo} excels in information completeness (0.79), 
+    though lower logical coherence (0.31) affects overall results.
     
-    \item \textbf{GPT-4} shows strong factual accuracy (0.8132) and context 
-    relevance (0.6438), indicating good context understanding.
+    \item \textbf{GPT-4} shows strong factual accuracy (0.81) and context 
+    relevance (0.64), indicating good context understanding.
 \end{itemize}
 
 \subsubsection{Model Comparison}
-To better understand the relative strengths and weaknesses of each model, we conducted a detailed comparative analysis across all evaluation dimensions.
+To better understand the relative strengths and weaknesses of each model, we conducted a detailed comparative analysis across all evaluation dimensions. As shown in Figure~\ref{fig:model_comparison}, the performance patterns reveal significant insights into model capabilities.
 
 \begin{figure}[!htbp]
 \centering
@@ -57,7 +58,7 @@ The model comparison reveals several interesting patterns:
 \end{itemize}
 
 \subsubsection{Overall Metrics Radar Charts}
-The radar charts provide a multidimensional view of each model's performance, highlighting their unique characteristics and balance across different metrics.
+The radar charts in Figure~\ref{fig:overall_metrics_radar} provide a multidimensional view of each model's performance, highlighting their unique characteristics and balance across different metrics.
 
 \begin{figure}[!htbp]
 \centering
@@ -88,7 +89,7 @@ The radar charts provide a multidimensional view of each model's performance, hi
 \end{itemize}
 
 \subsubsection{Metrics Trend Analysis}
-The trend analysis reveals the evolution of different metrics across various evaluation scenarios for each model, providing insights into their performance stability and patterns.
+Building on our methodology described in Section~\ref{sec:methodology}, we analyzed the evolution of different metrics across various evaluation scenarios for each model, providing insights into their performance stability and patterns.
 
 \begin{figure}[!htbp]
 \centering
@@ -120,6 +121,7 @@ The trend analysis reveals the evolution of different metrics across various eva
 \end{itemize}
 
 \subsection{Type-Specific Evaluation Results}
+Our analysis extends to different content types, revealing how models perform across various domains and contexts.
 
 \subsubsection{Scientific Explanation}
 The evaluation of scientific explanations focuses on the models' ability to accurately convey complex scientific concepts while maintaining factual integrity.
@@ -127,18 +129,23 @@ The evaluation of scientific explanations focuses on the models' ability to accu
 \begin{table}[!htbp]
 \centering
 \setlength{\tabcolsep}{4pt}  % Reduce table column spacing
-\caption{Scientific Explanation Metrics}
-\label{tab:results_scientific_metrics}
 \begin{tabular}{|l|c|c|c|c|c|c|c|}
 \hline
-\textbf{Model} & \textbf{Fact.} & \textbf{Logic} & \textbf{Context} & \textbf{Interp.} 
-& \textbf{Info.} & \textbf{Hall.} & \textbf{Overall} \\
+\textbf{Model} & \textbf{FA} & \textbf{LC} & \textbf{CR} & \textbf{IR} 
+& \textbf{IC} & \textbf{HS} & \textbf{OF} \\
 \hline
-GPT-3.5-Turbo & 0.8306 & 0.5723 & 0.5429 & 0.5137 & 0.7858 & 0.4919 & 0.6499 \\
-GPT-4-Turbo & 0.7199 & 0.3398 & 0.5888 & 0.5179 & 0.7923 & 0.1892 & 0.5481 \\
-GPT-4 & 0.7466 & 0.4538 & 0.6473 & 0.4696 & 0.7823 & 0.2530 & 0.5858 \\
+GPT-3.5-Turbo & 0.83 & 0.57 & 0.54 & 0.51 & 0.79 & 0.49 & 0.65 \\
+GPT-4-Turbo & 0.72 & 0.34 & 0.59 & 0.52 & 0.79 & 0.19 & 0.55 \\
+GPT-4 & 0.75 & 0.45 & 0.65 & 0.47 & 0.78 & 0.25 & 0.59 \\
 \hline
 \end{tabular}
+\caption{Scientific Explanation Metrics}
+\label{tab:results_scientific_metrics}
+\begin{flushleft}
+\small
+FA: Factual Accuracy, LC: Logical Coherence, CR: Context Relevance,\\
+IR: Interpretative Reasoning, IC: Information Completeness, HS: Hallucination Score, OF: Overall Faithfulness
+\end{flushleft}
 \end{table}
 
 \begin{figure}[!htbp]
@@ -150,7 +157,7 @@ GPT-4 & 0.7466 & 0.4538 & 0.6473 & 0.4696 & 0.7823 & 0.2530 & 0.5858 \\
 
 \textbf{Analysis}:
 \begin{itemize}
-    \item GPT-3.5-Turbo demonstrates exceptional performance in scientific explanations, particularly in factual accuracy (0.8306) and information completeness (0.7858)
+    \item GPT-3.5-Turbo demonstrates exceptional performance in scientific explanations, particularly in factual accuracy (0.83) and information completeness (0.79)
     \item Higher hallucination scores in this category suggest challenges in maintaining strict factual boundaries
     \item Logical coherence scores indicate room for improvement in structuring scientific arguments
 \end{itemize}
@@ -161,18 +168,23 @@ For technical content, we evaluated the models' capability to handle detailed te
 \begin{table}[!htbp]
 \centering
 \setlength{\tabcolsep}{4pt}  % Reduce table column spacing
-\caption{Technical Analysis Metrics}
-\label{tab:results_technical_metrics}
 \begin{tabular}{|l|c|c|c|c|c|c|c|}
 \hline
-\textbf{Model} & \textbf{Fact.} & \textbf{Logic} & \textbf{Context} & \textbf{Interp.} 
-& \textbf{Info.} & \textbf{Hall.} & \textbf{Overall} \\
+\textbf{Model} & \textbf{FA} & \textbf{LC} & \textbf{CR} & \textbf{IR} 
+& \textbf{IC} & \textbf{HS} & \textbf{OF} \\
 \hline
-GPT-3.5-Turbo & 0.8035 & 0.1930 & 0.6074 & 0.5386 & 0.6642 & 0.1938 & 0.5373 \\
-GPT-4-Turbo & 0.7540 & 0.2071 & 0.5570 & 0.5874 & 0.7946 & 0.1653 & 0.5353 \\
-GPT-4 & 0.8111 & 0.1670 & 0.7141 & 0.5911 & 0.6423 & 0.1571 & 0.5524 \\
+GPT-3.5-Turbo & 0.80 & 0.19 & 0.61 & 0.54 & 0.66 & 0.19 & 0.54 \\
+GPT-4-Turbo & 0.75 & 0.21 & 0.56 & 0.59 & 0.79 & 0.17 & 0.54 \\
+GPT-4 & 0.81 & 0.17 & 0.71 & 0.59 & 0.64 & 0.16 & 0.55 \\
 \hline
 \end{tabular}
+\caption{Technical Analysis Metrics}
+\label{tab:results_technical_metrics}
+\begin{flushleft}
+\small
+FA: Factual Accuracy, LC: Logical Coherence, CR: Context Relevance,\\
+IR: Interpretative Reasoning, IC: Information Completeness, HS: Hallucination Score, OF: Overall Faithfulness
+\end{flushleft}
 \end{table}
 
 \begin{figure}[!htbp]
@@ -195,18 +207,23 @@ The medical advice evaluation assessed the models' ability to provide accurate a
 \begin{table}[!htbp]
 \centering
 \setlength{\tabcolsep}{4pt}  % Reduce table column spacing
-\caption{Medical Advice Metrics}
-\label{tab:results_medical_metrics}
 \begin{tabular}{|l|c|c|c|c|c|c|c|}
 \hline
-\textbf{Model} & \textbf{Fact.} & \textbf{Logic} & \textbf{Context} & \textbf{Interp.} 
-& \textbf{Info.} & \textbf{Hall.} & \textbf{Overall} \\
+\textbf{Model} & \textbf{FA} & \textbf{LC} & \textbf{CR} & \textbf{IR} 
+& \textbf{IC} & \textbf{HS} & \textbf{OF} \\
 \hline
-GPT-3.5-Turbo & 0.9213 & 0.5800 & 0.6453 & 0.4023 & 0.7552 & 0.5496 & 0.6800 \\
-GPT-4-Turbo & 0.7951 & 0.3453 & 0.6105 & 0.5156 & 0.8247 & 0.3218 & 0.6630 \\
-GPT-4 & 0.9105 & 0.4630 & 0.6579 & 0.4605 & 0.7144 & 0.5809 & 0.6630 \\
+GPT-3.5-Turbo & 0.92 & 0.58 & 0.65 & 0.40 & 0.76 & 0.55 & 0.68 \\
+GPT-4-Turbo & 0.80 & 0.35 & 0.61 & 0.52 & 0.82 & 0.32 & 0.66 \\
+GPT-4 & 0.91 & 0.46 & 0.66 & 0.46 & 0.71 & 0.58 & 0.66 \\
 \hline
 \end{tabular}
+\caption{Medical Advice Metrics}
+\label{tab:results_medical_metrics}
+\begin{flushleft}
+\small
+FA: Factual Accuracy, LC: Logical Coherence, CR: Context Relevance,\\
+IR: Interpretative Reasoning, IC: Information Completeness, HS: Hallucination Score, OF: Overall Faithfulness
+\end{flushleft}
 \end{table}
 
 \begin{figure}[!htbp]
@@ -221,6 +238,86 @@ GPT-4 & 0.9105 & 0.4630 & 0.6579 & 0.4605 & 0.7144 & 0.5809 & 0.6630 \\
     \item Notably high factual accuracy across all models, particularly in GPT-3.5-Turbo (0.9213)
     \item Strong information completeness scores reflect comprehensive medical responses
     \item Higher hallucination scores warrant attention in medical context
+\end{itemize}
+
+\subsubsection{Historical Analysis}
+The historical analysis evaluation focused on the models' ability to accurately interpret and present historical information.
+
+\begin{table}[!htbp]
+\centering
+\setlength{\tabcolsep}{4pt}  % Reduce table column spacing
+\begin{tabular}{|l|c|c|c|c|c|c|c|}
+\hline
+\textbf{Model} & \textbf{FA} & \textbf{LC} & \textbf{CR} & \textbf{IR} 
+& \textbf{IC} & \textbf{HS} & \textbf{OF} \\
+\hline
+GPT-3.5-Turbo & 0.82 & 0.17 & 0.70 & 0.59 & 0.79 & 0.11 & 0.56 \\
+GPT-4-Turbo & 0.82 & 0.20 & 0.76 & 0.60 & 0.72 & 0.11 & 0.57 \\
+GPT-4 & 0.82 & 0.20 & 0.76 & 0.60 & 0.72 & 0.11 & 0.57 \\
+\hline
+\end{tabular}
+\caption{Historical Analysis Metrics}
+\label{tab:results_historical_metrics}
+\begin{flushleft}
+\small
+FA: Factual Accuracy, LC: Logical Coherence, CR: Context Relevance,\\
+IR: Interpretative Reasoning, IC: Information Completeness, HS: Hallucination Score, OF: Overall Faithfulness
+\end{flushleft}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.6\textwidth]{figures/types/historical_analysis_radar_gpt-4.png}
+\caption{Historical Analysis Performance Radar}
+\label{fig:historical_radar}
+\end{figure}
+
+\textbf{Analysis}:
+\begin{itemize}
+    \item All models demonstrate consistent factual accuracy (0.82) in historical content
+    \item Strong context relevance scores (>0.70) indicate good historical context understanding
+    \item Lower logical coherence scores suggest challenges in organizing historical narratives
+    \item Notably low hallucination scores (0.11) indicate reliable historical information presentation
+\end{itemize}
+
+\subsubsection{Current Events}
+The current events evaluation assessed the models' ability to handle contemporary information and recent developments.
+
+\begin{table}[!htbp]
+\centering
+\setlength{\tabcolsep}{4pt}  % Reduce table column spacing
+\begin{tabular}{|l|c|c|c|c|c|c|c|}
+\hline
+\textbf{Model} & \textbf{FA} & \textbf{LC} & \textbf{CR} & \textbf{IR} 
+& \textbf{IC} & \textbf{HS} & \textbf{OF} \\
+\hline
+GPT-3.5-Turbo & 0.80 & 0.52 & 0.43 & 0.54 & 0.66 & 0.51 & 0.61 \\
+GPT-4-Turbo & 0.76 & 0.39 & 0.44 & 0.66 & 0.67 & 0.33 & 0.59 \\
+GPT-4 & 0.78 & 0.45 & 0.44 & 0.66 & 0.67 & 0.33 & 0.59 \\
+\hline
+\end{tabular}
+\caption{Current Events Metrics}
+\label{tab:results_current_events_metrics}
+\begin{flushleft}
+\small
+FA: Factual Accuracy, LC: Logical Coherence, CR: Context Relevance,\\
+IR: Interpretative Reasoning, IC: Information Completeness, HS: Hallucination Score, OF: Overall Faithfulness
+\end{flushleft}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.6\textwidth]{figures/types/current_events_radar_gpt-4.png}
+\caption{Current Events Performance Radar}
+\label{fig:current_events_radar}
+\end{figure}
+
+\textbf{Analysis}:
+\begin{itemize}
+    \item GPT-3.5-Turbo shows highest factual accuracy (0.80) in current events
+    \item Lower context relevance scores (<0.45) suggest challenges in connecting contemporary information
+    \item Higher hallucination scores indicate increased uncertainty in recent event analysis
+    \item Strong interpretative reasoning in GPT-4 variants (0.66) shows good analytical capabilities
 \end{itemize}
 
 \subsubsection{Sample Type Comparison}
@@ -313,23 +410,21 @@ The stacked bar analysis illustrates the relative contribution of each metric to
 
 \begin{figure}[!htbp]
 \centering
-\begin{subfigure}[b]{0.32\textwidth}
+\begin{minipage}[t]{0.32\textwidth}
+    \centering
     \includegraphics[width=\textwidth]{figures/visualization/metrics_stacked_bar_gpt-3.5-turbo.png}
-    \caption{GPT-3.5-Turbo Composition}
-    \label{fig:metrics_stacked_bar_gpt35}
-\end{subfigure}
-\hfill
-\begin{subfigure}[b]{0.32\textwidth}
+    {\footnotesize (a) GPT-3.5-Turbo Composition}
+\end{minipage}%
+\begin{minipage}[t]{0.32\textwidth}
+    \centering
     \includegraphics[width=\textwidth]{figures/visualization/metrics_stacked_bar_gpt-4-turbo.png}
-    \caption{GPT-4-Turbo Composition}
-    \label{fig:metrics_stacked_bar_gpt4t}
-\end{subfigure}
-\hfill
-\begin{subfigure}[b]{0.32\textwidth}
+    {\footnotesize (b) GPT-4-Turbo Composition}
+\end{minipage}%
+\begin{minipage}[t]{0.32\textwidth}
+    \centering
     \includegraphics[width=\textwidth]{figures/visualization/metrics_stacked_bar_gpt-4.png}
-    \caption{GPT-4 Composition}
-    \label{fig:metrics_stacked_bar_gpt4}
-\end{subfigure}
+    {\footnotesize (c) GPT-4 Composition}
+\end{minipage}
 \caption{Metric Composition Analysis by Model}
 \label{fig:metrics_stacked_bars}
 \end{figure}
@@ -342,51 +437,56 @@ The stacked bar analysis illustrates the relative contribution of each metric to
 \end{itemize}
 
 \subsection{Performance Patterns}
+Based on our comprehensive evaluation framework described in Section 3, we identified several significant patterns in model performance.
 
 \subsubsection{Model-Specific Patterns}
 \begin{itemize}
     \item \textbf{GPT-3.5-Turbo}:
     \begin{itemize}
-        \item Excels in factual accuracy and information completeness
+        \item Excels in factual accuracy (0.84) and information completeness (0.73)
         \item Shows consistent performance across different sample types
         \item Higher hallucination scores indicate potential for improvement
     \end{itemize}
     
     \item \textbf{GPT-4-Turbo}:
     \begin{itemize}
-        \item Strong in information completeness and context relevance
+        \item Strong in information completeness (0.79) and context relevance (0.60)
         \item Lower logical coherence scores suggest areas for enhancement
-        \item Most effective at minimizing hallucinations
+        \item Most effective at minimizing hallucinations (0.21)
     \end{itemize}
     
     \item \textbf{GPT-4}:
     \begin{itemize}
         \item Balanced performance across all metrics
-        \item Superior context relevance and interpretative reasoning
-        \item Moderate hallucination control
+        \item Superior context relevance (0.64) and interpretative reasoning (0.56)
+        \item Moderate hallucination control (0.29)
     \end{itemize}
 \end{itemize}
 
 \subsubsection{Type-Specific Patterns}
+The analysis reveals distinct patterns across different content types, as detailed in Section~\ref{sec:evaluation}:
+
 \begin{itemize}
     \item \textbf{Scientific Content}:
     \begin{itemize}
-        \item High factual accuracy across all models
+        \item High factual accuracy across all models (>0.75)
         \item Challenges in maintaining logical coherence
         \item Variable hallucination control
     \end{itemize}
     
     \item \textbf{Technical Content}:
     \begin{itemize}
-        \item Strong context relevance
-        \item Lower logical coherence scores
-        \item Effective hallucination control
+        \item Strong context relevance (>0.60)
+        \item Lower logical coherence scores (<0.40)
+        \item Effective hallucination control (<0.30)
     \end{itemize}
     
     \item \textbf{Medical Content}:
     \begin{itemize}
-        \item Highest factual accuracy scores
-        \item Strong information completeness
+        \item Highest factual accuracy scores (>0.80)
+        \item Strong information completeness (>0.75)
         \item Variable hallucination control
     \end{itemize}
 \end{itemize}
+
+These patterns align with our initial hypotheses and provide valuable insights for future model improvements.
